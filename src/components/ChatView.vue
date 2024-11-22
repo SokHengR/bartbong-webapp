@@ -1,5 +1,16 @@
-<script setup lang="ts">
+<script setup>
+import { defineProps, defineEmits } from 'vue';
 import ChatBar from './ChatBar.vue';
+
+const props = defineProps({
+    isExpand: Boolean,
+    isKhmer: Boolean,
+});
+
+const emit = defineEmits(['toggle-expand']);
+
+const message_english = "How can I help you, Bong?";
+const message_khmer = "តើប្អូនអាចជួយអ្វីបងបាន?";
 </script>
 
 <template>
@@ -16,7 +27,11 @@ import ChatBar from './ChatBar.vue';
                 <img src="/src/assets/icon/expand_down.svg">
             </div>
 
-            <img class="icon_button" src="/src/assets/icon/menu.svg">
+            <div>
+                <div v-if="isExpand" class="standard_icon_size"></div>
+                <img v-if="!isExpand" class="icon_button" src="/src/assets/icon/menu.svg"
+                    @click="emit('toggle-expand')">
+            </div>
 
         </div>
 
@@ -24,20 +39,33 @@ import ChatBar from './ChatBar.vue';
 
         <div class="main_chat_container">
             <div class="chat_title_welcome">
-                How can I help you, Bong?
+                {{ isKhmer ? message_khmer : message_english }}
             </div>
-            <ChatBar />
+            <ChatBar :isKhmer="isKhmer" />
         </div>
     </div>
 </template>
 
 <style scoped>
 .chat_title_welcome {
+    font-family: "Dangrek", sans-serif;
     color: white;
     padding: 20px;
-    font-size: 40px;
+    font-size: 20px;
     font-weight: bold;
     text-align: center;
+}
+
+@media (min-width: 700px) {
+    .chat_title_welcome {
+        font-size: 40px;
+    }
+}
+
+@media (min-width: 900px) {
+    .chat_title_welcome {
+        font-size: 60px;
+    }
 }
 
 .chat_view_container {

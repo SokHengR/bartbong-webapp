@@ -1,13 +1,20 @@
-<script setup lang="ts">
+<script setup>
+import { ref } from 'vue';
 import ChatView from '../components/ChatView.vue';
 import SideBar from '../components/SideBar.vue';
 
+const isExpand = ref(true);
+const isKhmer = ref(false);
+
+function toggleExpand() {
+    isExpand.value = !isExpand.value;
+}
 </script>
 
 <template>
     <div class="split_view_container">
-        <ChatView />
-        <SideBar />
+        <ChatView :isExpand="isExpand" :isKhmer="isKhmer" @toggle-expand="toggleExpand" />
+        <SideBar :isExpand="isExpand" :isKhmer="isKhmer" @toggle-expand="toggleExpand" />
     </div>
 </template>
 

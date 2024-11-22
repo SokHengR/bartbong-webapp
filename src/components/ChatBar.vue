@@ -1,7 +1,19 @@
+<script setup>
+import { defineProps } from 'vue';
+
+const props = defineProps({
+    isKhmer: Boolean,
+});
+
+const type_english = "Bart Bong?";
+const type_khmer = "បាទបង?";
+</script>
+
 <template>
     <div class="chat_container">
-        <textarea v-model="text" @input="adjustHeight" ref="textarea" :style="{ height: height, maxHeight: '200px' }"
-            placeholder="Type something..." rows="1" class="chat_text_editor">
+        <textarea v-model="text" @input="adjustHeight" ref="textarea"
+            :style="{ height: height, maxHeight: '200px', minHeight: minHeight }"
+            :placeholder="isKhmer ? type_khmer : type_english" rows="1" class="chat_text_editor">
             </textarea>
         <div class="chat_bar_tools">
             <div class="horizontal_container">
@@ -25,6 +37,7 @@ export default {
         return {
             text: '',
             height: 'auto',
+            minHeight: '35px',
         };
     },
     methods: {
@@ -46,7 +59,7 @@ export default {
     padding: 10px;
     border: 1px solid #383838;
     width: 100%;
-    max-width: 800px;
+    max-width: 900px;
     border-radius: 10px;
     box-sizing: border-box;
     background-color: rgba(255, 255, 255, 0.03);
