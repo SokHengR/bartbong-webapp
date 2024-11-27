@@ -1,20 +1,38 @@
 <script setup>
-import { defineProps } from 'vue';
+import { defineProps, ref, nextTick, computed } from 'vue';
 
 const props = defineProps({
     isKhmer: Boolean,
+    chatArray: Array,
 });
 
 const type_english = "Bart Bong?";
 const type_khmer = "បាទបង?";
+
+const text = ref('');
+
+const isSendButtonEnabled = computed(() => {
+    return text.value.trim() !== '';
+});
+
+function add_new_message() {
+    if (text.value.trim() !== '') {
+        props.chatArray.push({ user: 'user', message: text.value });
+        text.value = "";
+        nextTick(() => {
+            const textarea = document.querySelector('.chat_text_editor');
+            textarea.focus(); 
+        });
+    }
+}
 </script>
 
 <template>
     <div class="chat_container">
         <textarea v-model="text" @input="adjustHeight" ref="textarea"
-            :style="{ height: height, maxHeight: '200px', minHeight: minHeight }"
+            :style="{ height: height, maxHeight: '200px', minHeight: minHeight, lineHeight: '1.5' }"
             :placeholder="isKhmer ? type_khmer : type_english" rows="1" class="chat_text_editor">
-            </textarea>
+        </textarea>
         <div class="chat_bar_tools">
             <div class="horizontal_container">
                 <div class="button_border" style="padding: 5px;">
@@ -24,7 +42,7 @@ const type_khmer = "បាទបង?";
                     <img src="../assets/icon/auto_fix.svg">
                 </div>
             </div>
-            <div class="button_border" style="padding: 5px;">
+            <div class="button_border" style="padding: 5px" @click="add_new_message()" :class="{ disabled: !isSendButtonEnabled }">
                 <img src="../assets/icon/arrow_upward.svg">
             </div>
         </div>
@@ -33,13 +51,6 @@ const type_khmer = "បាទបង?";
 
 <script>
 export default {
-    data() {
-        return {
-            text: '',
-            height: 'auto',
-            minHeight: '35px',
-        };
-    },
     methods: {
         adjustHeight() {
             const textarea = this.$refs.textarea;
@@ -49,6 +60,12 @@ export default {
             }
         },
     },
+    data() {
+        return {
+            height: 'auto',
+            minHeight: '40px',
+        };
+    }
 };
 </script>
 
@@ -59,7 +76,7 @@ export default {
     padding: 10px;
     border: 1px solid #383838;
     width: 100%;
-    max-width: 900px;
+    max-width: 800px;
     border-radius: 10px;
     box-sizing: border-box;
     background-color: rgba(255, 255, 255, 0.03);
@@ -82,5 +99,10 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding-top: 10px;
+}
+
+.disabled {
+    opacity: 0.5;
+    pointer-events: none; 
 }
 </style>

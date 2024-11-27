@@ -1,10 +1,12 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
 import ChatBar from './ChatBar.vue';
+import ChatTextCell from './ChatCellView/ChatTextCell.vue';
 
 const props = defineProps({
     isExpand: Boolean,
     isKhmer: Boolean,
+    chatArray: Array,
 });
 
 const emit = defineEmits(['toggle-expand']);
@@ -28,7 +30,6 @@ const message_khmer = "តើប្អូនអាចជួយអ្វីបង
             </div>
 
             <div>
-                <div v-if="isExpand" class="standard_icon_size"></div>
                 <img v-if="!isExpand" class="icon_button" src="/src/assets/icon/menu.svg"
                     @click="emit('toggle-expand')">
             </div>
@@ -38,34 +39,51 @@ const message_khmer = "តើប្អូនអាចជួយអ្វីបង
         <div class="horizontal_line"></div>
 
         <div class="main_chat_container">
-            <div class="chat_title_welcome">
+            <div v-if="chatArray.length == 0" class="chat_title_welcome">
                 {{ isKhmer ? message_khmer : message_english }}
             </div>
-            <ChatBar :isKhmer="isKhmer" />
+
+            <div v-if="chatArray.length > 0" class="chat_list_container">
+                <div v-for="(chat, index) in chatArray" :key="index">
+                    {{ console.log(chatArray) }}
+                    <ChatTextCell :senderType="chat.user" :contentText="chat.message" />
+                </div>
+            </div>
+
+            <ChatBar :isKhmer="isKhmer" :chatArray="chatArray" />
         </div>
     </div>
 </template>
 
 <style scoped>
+
+@keyframes chat_list_expansion {
+    0% {
+        height: 0%;
+    }
+    100% {
+        height: 100%;
+    }
+}
+
+.chat_list_container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    height: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    animation: chat_list_expansion 1s;
+}
+
 .chat_title_welcome {
-    font-family: "Dangrek", sans-serif;
+    font-family: "Suwannaphum", sans-serif;
     color: white;
     padding: 20px;
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 30px;
     text-align: center;
-}
-
-@media (min-width: 700px) {
-    .chat_title_welcome {
-        font-size: 40px;
-    }
-}
-
-@media (min-width: 900px) {
-    .chat_title_welcome {
-        font-size: 60px;
-    }
 }
 
 .chat_view_container {
@@ -104,5 +122,17 @@ const message_khmer = "តើប្អូនអាចជួយអ្វីបង
     padding-left: 20px;
     padding-right: 20px;
     padding-bottom: 20px;
+}
+
+@media (min-width: 700px) {
+    .chat_title_welcome {
+        font-size: 40px;
+    }
+}
+
+@media (min-width: 900px) {
+    .chat_title_welcome {
+        font-size: 60px;
+    }
 }
 </style>

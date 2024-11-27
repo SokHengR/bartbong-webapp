@@ -6,15 +6,19 @@ defineProps({
     haveBorder: Boolean,
     isRed: Boolean,
 })
+
+const emit = defineEmits(['click'])
+
+function onClick() {
+    emit('click')
+}
 </script>
 
 <template>
-    <div :class="{
-        'border_button': haveBorder,
-        'danger_border_button': isRed,
-        'theme_button': !haveBorder && !isRed
-    }">
-        <img class="standard_icon_size" :src="imageSrc" :alt="buttonText">
+    <div @click="onClick" :class="{
+        'border_button': haveBorder, 'danger_border_button': isRed, 'theme_button': !haveBorder && !isRed
+    }" >
+        <img class="standard_icon_size" :src="imageSrc" :alt="buttonText" />
         <label :id="identification">{{ buttonText || 'Saved' }}</label>
     </div>
 </template>
@@ -33,6 +37,9 @@ defineProps({
     align-items: center;
     gap: 10px;
     justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .border_button {
