@@ -43,10 +43,12 @@ const message_khmer = "តើប្អូនអាចជួយអ្វីបង
                 {{ isKhmer ? message_khmer : message_english }}
             </div>
 
-            <div v-if="chatArray.length > 0" class="chat_list_container">
-                <div v-for="(chat, index) in chatArray" :key="index">
-                    {{ console.log(chatArray) }}
-                    <ChatTextCell :senderType="chat.user" :contentText="chat.message" />
+            <div v-if="chatArray.length > 0" class="chat_list_scrollview">
+                <div class="chat_list_scrol_content">
+                    <div v-for="(chat, index) in chatArray" :key="index">
+                        {{ console.log(chatArray) }}
+                        <ChatTextCell :senderType="chat.user" :contentText="chat.message" />
+                    </div>
                 </div>
             </div>
 
@@ -56,25 +58,34 @@ const message_khmer = "តើប្អូនអាចជួយអ្វីបង
 </template>
 
 <style scoped>
-
 @keyframes chat_list_expansion {
     0% {
         height: 0%;
     }
+
     100% {
         height: 100%;
     }
 }
 
-.chat_list_container {
+.chat_list_scrol_content {
+    width: 100%;
+    max-width: 780px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.chat_list_scrollview {
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
     height: 100%;
-    max-width: 800px;
     display: flex;
+    flex-grow: 1;
     flex-direction: column;
     box-sizing: border-box;
+    align-items: center;
     animation: chat_list_expansion 1s;
 }
 
@@ -88,7 +99,7 @@ const message_khmer = "តើប្អូនអាចជួយអ្វីបង
 
 .chat_view_container {
     width: 100%;
-    height: 100%;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -119,9 +130,6 @@ const message_khmer = "តើប្អូនអាចជួយអ្វីបង
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-bottom: 20px;
 }
 
 @media (min-width: 700px) {

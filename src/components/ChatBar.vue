@@ -18,6 +18,7 @@ const isSendButtonEnabled = computed(() => {
 function add_new_message() {
     if (text.value.trim() !== '') {
         props.chatArray.push({ user: 'user', message: text.value });
+        props.chatArray.push({ user: 'assistant', message: text.value });
         text.value = "";
         nextTick(() => {
             const textarea = document.querySelector('.chat_text_editor');
