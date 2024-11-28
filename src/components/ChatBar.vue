@@ -1,4 +1,5 @@
 <script setup>
+import axios from 'axios';
 import { defineProps, ref, nextTick, computed } from 'vue';
 
 const props = defineProps({
@@ -15,15 +16,38 @@ const isSendButtonEnabled = computed(() => {
     return text.value.trim() !== '';
 });
 
-function add_new_message() {
+function send_message(message_content) {
     if (text.value.trim() !== '') {
-        props.chatArray.push({ user: 'user', message: text.value });
-        props.chatArray.push({ user: 'assistant', message: text.value });
-        text.value = "";
-        nextTick(() => {
-            const textarea = document.querySelector('.chat_text_editor');
-            textarea.focus(); 
+        add_new_message('user', message_content);
+        fetch_api(message_content);
+    }
+}
+
+function add_new_message(user_type, message_content) {
+    props.chatArray.push({ role: user_type, content: message_content });
+    text.value = "";
+    nextTick(() => {
+        const textarea = document.querySelector('.chat_text_editor');
+        textarea.focus();
+    });
+}
+
+function fetch_api() {
+    try {
+        const api_key = "Bearer banteaydev-L-yz1NuPaf0xRUiJydb0eW_hF6raMK5w1x9u6gMMVqk"
+        axios.post('https://api.sannimith.com/v1/chat/completions', {
+            "model": "gpt-4o-mini",
+            "messages": props.chatArray
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': api_key
+            }
+        }).then(response => {
+            add_new_message('assistant', response.data.choices[0].message.content);
         });
+    } catch (error) {
+        console.error('Error fetching data:', error);
     }
 }
 </script>
@@ -43,7 +67,8 @@ function add_new_message() {
                     <img src="../assets/icon/auto_fix.svg">
                 </div>
             </div>
-            <div class="button_border" style="padding: 5px" @click="add_new_message()" :class="{ disabled: !isSendButtonEnabled }">
+            <div class="button_border" style="padding: 5px" @click="send_message(text)"
+                :class="{ disabled: !isSendButtonEnabled }">
                 <img src="../assets/icon/arrow_upward.svg">
             </div>
         </div>
@@ -104,6 +129,6 @@ export default {
 
 .disabled {
     opacity: 0.5;
-    pointer-events: none; 
+    pointer-events: none;
 }
 </style>

@@ -50,7 +50,7 @@ const make_mistake_khmer = "កម្មវិធីបាទបងអាចផ�
                 <div class="chat_list_scrol_content">
                     <div v-for="(chat, index) in chatArray" :key="index">
                         {{ console.log(chatArray) }}
-                        <ChatTextCell :senderType="chat.user" :contentText="chat.message" />
+                        <ChatTextCell :senderType="chat.role" :contentText="chat.content" />
                     </div>
                 </div>
             </div>

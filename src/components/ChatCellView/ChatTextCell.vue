@@ -11,7 +11,7 @@ const props = defineProps({
 
 // Configure marked to use highlight.js for code blocks
 marked.setOptions({
-    highlight: function(code, lang) {
+    highlight: function (code, lang) {
         const language = hljs.getLanguage(lang) ? lang : 'plaintext'
         try {
             return hljs.highlight(code, { language }).value
@@ -39,11 +39,8 @@ onMounted(() => {
 
 <template>
     <div :class="'chat_text_cellview ' + (isUser() ? 'for_user' : 'for_assistant')">
-        <div 
-            :class="isUser() ? 'user_chat_container' : 'assistant_chat_container'"
-            v-html="renderedContent"
-            ref="contentRef"
-        ></div>
+        <div :class="isUser() ? 'user_chat_container' : 'assistant_chat_container'" v-html="renderedContent"
+            ref="contentRef"></div>
     </div>
 </template>
 
@@ -61,11 +58,16 @@ onMounted(() => {
     justify-content: right;
 }
 
+.for_user p {
+    margin: 0px;
+}
+
 .for_assistant {
     justify-content: left;
 }
 
 .user_chat_container {
+    word-wrap: break-word;
     color: white;
     padding: 10px;
     border-radius: 5px;
@@ -74,6 +76,7 @@ onMounted(() => {
 }
 
 .assistant_chat_container {
+    word-wrap: break-word;
     color: white;
     background-color: transparent;
     box-sizing: border-box;
@@ -94,7 +97,7 @@ onMounted(() => {
     overflow-x: auto;
 }
 
-.user_chat_container code, 
+.user_chat_container code,
 .assistant_chat_container code {
     font-family: 'Courier New', monospace;
     font-size: 0.9em;
