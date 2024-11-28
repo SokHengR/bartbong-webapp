@@ -42,6 +42,7 @@ function desktopClass() {
 }
 
 function clear_all_chat() {
+    emit('toggle-expand');
     emit('clear-all-chat');
 }
 </script>
@@ -112,6 +113,7 @@ function clear_all_chat() {
     0% {
         width: 70px;
     }
+
     100% {
         width: 300px;
     }
@@ -121,6 +123,7 @@ function clear_all_chat() {
     0% {
         width: 300px;
     }
+
     100% {
         width: 70px;
     }
@@ -131,18 +134,22 @@ function clear_all_chat() {
     0% {
         width: 0px;
     }
+
     100% {
         width: 300px;
     }
 }
+
 @keyframes side_bar_close_mobile {
     0% {
         width: 300px;
     }
+
     100% {
         width: 0px;
     }
 }
+
 /* ---------------------------------------- Mobile Version */
 
 .mobile_device {
@@ -186,6 +193,7 @@ function clear_all_chat() {
     background-color: #131313;
     animation: side_bar_close_mobile 0.1s;
 }
+
 /* ---------------------------------------- Mobile Version */
 
 .inner_sidebar_container {

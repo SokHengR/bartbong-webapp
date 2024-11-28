@@ -4,7 +4,7 @@ import ChatView from '../components/ChatView.vue';
 import SideBar from '../components/SideBar.vue';
 
 const isExpand = ref(false);
-const isKhmer = ref(false);
+const isKhmer = ref(true);
 const chatArray = ref([]);
 
 function toggleExpand() {

@@ -1,8 +1,8 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
-import 'highlight.js/styles/github-dark.css' // You can choose different highlight.js themes
+import 'highlight.js/styles/github-dark.css'
 
 const props = defineProps({
     senderType: String,
@@ -13,7 +13,11 @@ const props = defineProps({
 marked.setOptions({
     highlight: function(code, lang) {
         const language = hljs.getLanguage(lang) ? lang : 'plaintext'
-        return hljs.highlight(code, { language }).value
+        try {
+            return hljs.highlight(code, { language }).value
+        } catch (error) {
+            return code
+        }
     },
     langPrefix: 'hljs language-',
 })
@@ -26,6 +30,11 @@ const renderedContent = computed(() => {
 function isUser() {
     return props.senderType === 'user'
 }
+
+// Add this to ensure highlighting is applied after rendering
+onMounted(() => {
+    hljs.highlightAll()
+})
 </script>
 
 <template>
@@ -33,6 +42,7 @@ function isUser() {
         <div 
             :class="isUser() ? 'user_chat_container' : 'assistant_chat_container'"
             v-html="renderedContent"
+            ref="contentRef"
         ></div>
     </div>
 </template>
