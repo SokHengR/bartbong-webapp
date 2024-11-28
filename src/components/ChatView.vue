@@ -13,6 +13,9 @@ const emit = defineEmits(['toggle-expand']);
 
 const message_english = "How can I help you, Bong?";
 const message_khmer = "តើប្អូនអាចជួយអ្វីបងបាន?";
+
+const make_mistake_english = "Bart Bong can make mistakes. Please double-check it.";
+const make_mistake_khmer = "កម្មវិធីបាទបងអាចផ្តល់នូវព័ត៌មានមិនត្រឹមត្រូវ សូមបងត្រួតពិនិត្យមើលផង";
 </script>
 
 <template>
@@ -54,6 +57,11 @@ const message_khmer = "តើប្អូនអាចជួយអ្វីបង
 
             <ChatBar :isKhmer="isKhmer" :chatArray="chatArray" />
         </div>
+
+        <div class="mini_friendly_reminder">
+            {{ isKhmer ? make_mistake_khmer : make_mistake_english }}
+        </div>
+
     </div>
 </template>
 
@@ -62,14 +70,19 @@ const message_khmer = "តើប្អូនអាចជួយអ្វីបង
     0% {
         height: 0%;
     }
-
     100% {
         height: 100%;
     }
 }
 
+.mini_friendly_reminder {
+    color: white;
+    font-size: 12px;
+    padding: 4px;
+}
+
 .chat_list_scrol_content {
-    width: 100%;
+    width: calc(100% - 60px);
     max-width: 780px;
     display: flex;
     flex-direction: column;
@@ -77,14 +90,13 @@ const message_khmer = "តើប្អូនអាចជួយអ្វីបង
 }
 
 .chat_list_scrollview {
+    position: relative;
     overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
     height: 100%;
     display: flex;
-    flex-grow: 1;
     flex-direction: column;
-    box-sizing: border-box;
     align-items: center;
     animation: chat_list_expansion 1s;
 }
@@ -125,7 +137,7 @@ const message_khmer = "តើប្អូនអាចជួយអ្វីបង
 .main_chat_container {
     display: flex;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 105px);
     flex-direction: column;
     align-items: center;
     justify-content: center;

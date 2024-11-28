@@ -43,7 +43,7 @@ function isUser() {
     display: flex;
     flex-direction: row;
     align-items: top;
-    padding-top: 4px;
+    padding-top: 10px;
     box-sizing: border-box;
 }
 
@@ -59,18 +59,17 @@ function isUser() {
     color: white;
     padding: 10px;
     border-radius: 5px;
-    background-color: orangered;
+    background-color: #398300;
     max-width: 80%;
 }
 
 .assistant_chat_container {
     color: white;
-    padding: 20px;
     background-color: transparent;
+    box-sizing: border-box;
     max-width: 100%;
 }
 
-/* Markdown and Code Highlighting Styles */
 .user_chat_container pre {
     background-color: rgba(255, 255, 255, 0.2) !important;
     padding: 10px;

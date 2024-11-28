@@ -64,7 +64,7 @@ export default {
     data() {
         return {
             height: 'auto',
-            minHeight: '40px',
+            minHeight: '30px',
         };
     }
 };
@@ -76,7 +76,7 @@ export default {
     flex-direction: column;
     padding: 10px;
     border: 1px solid #383838;
-    width: 100%;
+    width: calc(100% - 40px);
     max-width: 800px;
     border-radius: 10px;
     box-sizing: border-box;
