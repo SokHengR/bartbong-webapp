@@ -15,7 +15,7 @@ const message_english = "How can I help you, Bong?";
 const message_khmer = "តើប្អូនអាចជួយអ្វីបងបាន?";
 
 const make_mistake_english = "Bart Bong can make mistakes. Please double-check it.";
-const make_mistake_khmer = "កម្មវិធីបាទបងអាចផ្តល់នូវព័ត៌មានមិនត្រឹមត្រូវ សូមបងត្រួតពិនិត្យមើលផង";
+const make_mistake_khmer = "កម្មវិធីបាទបងអាចនឹងផ្តល់នូវព័ត៌មានមិនត្រឹមត្រូវ សូមបងត្រួតពិនិត្យមើលផង";
 </script>
 
 <template>

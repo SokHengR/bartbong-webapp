@@ -45,6 +45,16 @@ onMounted(() => {
 </template>
 
 <style>
+@keyframes chat_assistant_expansion {
+    from {
+        max-height: 0;
+        opacity: 0;
+    } to {
+        max-height: 1000px; /* Adjust this value if necessary */
+        opacity: 1;
+    }
+}
+
 .chat_text_cellview {
     width: 100%;
     display: flex;
@@ -81,6 +91,8 @@ onMounted(() => {
     background-color: transparent;
     box-sizing: border-box;
     max-width: 100%;
+    animation: chat_assistant_expansion 0.5s ease-in-out;
+    overflow: hidden;
 }
 
 .user_chat_container pre {
