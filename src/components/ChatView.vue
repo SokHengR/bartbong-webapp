@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, ref, nextTick } from "vue";
 import ChatInputBar from "./ChatInputBar.vue";
 import ChatTextCell from "./ChatCellView/ChatTextCell.vue";
 import GeneratingCell from "./ChatCellView/GeneratingCell.vue";
@@ -14,6 +14,8 @@ const props = defineProps({
 
 const emit = defineEmits(["toggle-expand", "set-is-generating-to"]);
 
+const chatListScrollView = ref(null);
+
 const message_english = "How can I help you, Bong?";
 const message_khmer = "តើប្អូនអាចជួយអ្វីបងបាន?";
 
@@ -23,6 +25,15 @@ const make_mistake_khmer =
   "កម្មវិធីបាទបងអាចនឹងផ្តល់នូវព័ត៌មានមិនត្រឹមត្រូវ សូមបងត្រួតពិនិត្យមើលផង";
 const signin_english = "Sign In";
 const signin_khmer = "ចូលគណនី";
+
+function scrollToBottom() {
+  nextTick(() => {
+    if (chatListScrollView.value) {
+      chatListScrollView.value.scrollTop =
+        chatListScrollView.value.scrollHeight;
+    }
+  });
+}
 </script>
 
 <template>
@@ -76,10 +87,13 @@ const signin_khmer = "ចូលគណនី";
         {{ isKhmer ? message_khmer : message_english }}
       </div>
 
-      <div v-if="chatArray.length > 0" class="chat_list_scrollview">
+      <div
+        v-if="chatArray.length > 0"
+        class="chat_list_scrollview"
+        ref="chatListScrollView"
+      >
         <div class="chat_list_scroll_content">
           <div v-for="(chat, index) in chatArray" :key="index">
-            {{ console.log(chatArray) }}
             <ChatTextCell :senderType="chat.role" :contentText="chat.content" />
           </div>
 
@@ -94,6 +108,7 @@ const signin_khmer = "ចូលគណនី";
         @set-is-generating-to="
           (isActive) => emit('set-is-generating-to', isActive)
         "
+        @scroll-to-bottom="scrollToBottom"
       />
     </div>
 
@@ -147,6 +162,7 @@ const signin_khmer = "ចូលគណនី";
   box-sizing: border-box;
 }
 
+
 .chat_list_scrollview {
   position: relative;
   overflow-y: auto;
@@ -156,7 +172,26 @@ const signin_khmer = "ចូលគណនី";
   display: flex;
   flex-direction: column;
   align-items: center;
-  animation: chat_list_expansion 1s;
+  scroll-behavior: smooth; /* Add smooth scrolling */
+  scrollbar-width: thin; /* For Firefox */
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* For Firefox */
+}
+
+.chat_list_scrollview::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat_list_scrollview::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat_list_scrollview::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.chat_list_scrollview::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .chat_title_welcome {

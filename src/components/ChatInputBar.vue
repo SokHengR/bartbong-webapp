@@ -13,7 +13,7 @@ const type_khmer = "បាទបង?";
 
 const text = ref("");
 
-const emit = defineEmits(["set-is-generating-to"]);
+const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom"]);
 
 const isSendButtonEnabled = computed(() => {
   return text.value.trim() !== "";
@@ -37,6 +37,7 @@ function add_new_message(user_type, message_content) {
     const textarea = document.querySelector(".chat_text_editor");
     textarea.focus();
   });
+  emit("scroll-to-bottom");
 }
 
 function fetch_api() {
