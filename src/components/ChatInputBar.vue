@@ -30,7 +30,9 @@ function send_message(message_content) {
 
 function add_new_message(user_type, message_content) {
   props.chatArray.push({ role: user_type, content: message_content });
+  if (user_type.toLowerCase() == "user") {
   text.value = "";
+  }
   nextTick(() => {
     const textarea = document.querySelector(".chat_text_editor");
     textarea.focus();
