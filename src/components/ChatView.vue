@@ -28,11 +28,12 @@ const signin_khmer = "ចូលគណនី";
 <template>
   <div class="chat_view_container">
     <div class="chat_title_bar">
-
-      <div v-if="isSignedIn" class="horizontal_container" style="gap: 5px;">
+      <div v-if="isSignedIn" class="horizontal_container" style="gap: 5px">
         <img class="profile_div" src="/src/assets/default_profile.jpg" />
       </div>
-      <div v-if="!isSignedIn" class="button_border">{{ isKhmer ? signin_khmer : signin_english }}</div>
+      <div v-if="!isSignedIn" class="button_border">
+        {{ isKhmer ? signin_khmer : signin_english }}
+      </div>
 
       <div class="button_border">
         បាទបង (ឥតគិតថ្លៃ)
@@ -40,7 +41,12 @@ const signin_khmer = "ចូលគណនី";
       </div>
 
       <div>
-        <img v-if="!isExpand" class="icon_button" src="/src/assets/icon/menu.svg" @click="emit('toggle-expand')" />
+        <img
+          v-if="!isExpand"
+          class="icon_button"
+          src="/src/assets/icon/menu.svg"
+          @click="emit('toggle-expand')"
+        />
       </div>
     </div>
 
@@ -50,22 +56,23 @@ const signin_khmer = "ចូលគណនី";
       <div class="chat_title_name_bar_container">
         fortnite
 
-        <div style="display: flex; flex-direction: row; gap: 5px;">
-
+        <div style="display: flex; flex-direction: row; gap: 5px">
           <div class="safe_button_border" style="padding: 5px">
-            <img style="width: 20px;" src="../assets/icon/bookmark_green.svg" />
+            <img style="width: 20px" src="../assets/icon/bookmark_green.svg" />
           </div>
 
           <div class="warn_button_border" style="padding: 5px">
-            <img style="width: 20px;" src="../assets/icon/cleaning.svg" />
+            <img style="width: 20px" src="../assets/icon/cleaning.svg" />
           </div>
-
         </div>
       </div>
     </div>
 
     <div class="main_chat_container">
-      <div v-if="chatArray.length == 0" :class="['chat_title_welcome', isKhmer ? '' : 'roboto_condensed']">
+      <div
+        v-if="chatArray.length == 0"
+        :class="['chat_title_welcome', isKhmer ? '' : 'roboto_condensed']"
+      >
         {{ isKhmer ? message_khmer : message_english }}
       </div>
 
@@ -80,8 +87,14 @@ const signin_khmer = "ចូលគណនី";
         </div>
       </div>
 
-      <ChatInputBar :isKhmer="isKhmer" :isGenerating="isGenerating" :chatArray="chatArray"
-        @set-is-generating-to="(isActive) => emit('set-is-generating-to', isActive)" />
+      <ChatInputBar
+        :isKhmer="isKhmer"
+        :isGenerating="isGenerating"
+        :chatArray="chatArray"
+        @set-is-generating-to="
+          (isActive) => emit('set-is-generating-to', isActive)
+        "
+      />
     </div>
 
     <div class="mini_friendly_reminder">
