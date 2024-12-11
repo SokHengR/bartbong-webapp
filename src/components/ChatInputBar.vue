@@ -67,7 +67,7 @@ function fetch_api() {
 </script>
 
 <template>
-  <div class="chat_container">
+  <div class="chat_input_container">
     <textarea
       v-model="text"
       @input="adjustHeight"
@@ -125,7 +125,7 @@ export default {
 </script>
 
 <style scoped>
-.chat_container {
+.chat_input_container {
   display: flex;
   flex-direction: column;
   padding: 10px;

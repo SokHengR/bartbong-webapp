@@ -7,6 +7,7 @@ const isExpand = ref(false);
 const isKhmer = ref(true);
 const chatArray = ref([]);
 const isGenerating = ref(true);
+const isSignedIn = ref(true);
 
 function toggleExpand() {
   isExpand.value = !isExpand.value;
@@ -29,6 +30,7 @@ function setIsGeneratingTo(isActive) {
       :isExpand="isExpand"
       :isKhmer="isKhmer"
       :isGenerating="isGenerating"
+      :isSignedIn="isSignedIn"
       :chatArray="chatArray"
       @toggle-expand="toggleExpand"
       @set-is-generating-to="setIsGeneratingTo"

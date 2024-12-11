@@ -1,10 +1,11 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue';
-import ThemeButton from './ThemeButton.vue';
+import ThemeButton from './CustomButton/ThemeButton.vue';
 
 import bart_bong_long from '/src/assets/bart_bong_long.png';
 import bart_bong_short from '/src/assets/bart_bong_short.png';
 import addIcon from '/src/assets/icon/add.svg';
+import group3 from '/src/assets/icon/group3.svg';
 import folderIcon from '/src/assets/icon/folder.svg';
 import bookmarkIcon from '/src/assets/icon/bookmark.svg';
 import reviewIcon from '/src/assets/icon/review.svg';
@@ -20,11 +21,17 @@ const props = defineProps({
     isDesktop: Boolean,
 });
 
+const sideBarWidth = "350px";
+const sideBarAnimationDuration = "0.3s";
+
 const justify_space = 'justify-content: space-between;';
 const justify_center = 'justify-content: center;';
 
 const new_chat_english = "New Chat";
 const new_chat_khmer = "បង្កើតការពិភាក្សាថ្មី";
+
+const assistant_english = "My Assistant";
+const assistant_khmer = "ជំនួយការរបស់បង";
 
 const file_english = "My File";
 const file_khmer = "ឯកសាររបស់បង";
@@ -71,6 +78,8 @@ function clear_all_chat() {
         <div v-if="isExpand" class="inner_sidebar_container">
             <ThemeButton :buttonText="isKhmer ? new_chat_khmer : new_chat_english" :imageSrc="addIcon"
                 identification="new_chat_label" haveBorder />
+            <ThemeButton :buttonText="isKhmer ? assistant_khmer : assistant_english" :imageSrc="group3"
+                identification="standard_icon_size" />
             <ThemeButton :buttonText="isKhmer ? file_khmer : file_english" :imageSrc="folderIcon"
                 identification="standard_icon_size" />
             <ThemeButton :buttonText="isKhmer ? save_khmer : save_english" :imageSrc="bookmarkIcon"
@@ -84,6 +93,10 @@ function clear_all_chat() {
         <div v-if="!isExpand && isDesktop" class="inner_sidebar_container">
 
             <img class="button_border" :src="addIcon" alt="New Chat">
+
+            <div class="button_theme">
+                <img class="standard_icon_size" :src="group3" alt="My Assistant">
+            </div>
 
             <div class="button_theme">
                 <img class="standard_icon_size" :src="folderIcon" alt="My File">
@@ -123,13 +136,13 @@ function clear_all_chat() {
     }
 
     100% {
-        width: 300px;
+        width: v-bind(sideBarWidth);
     }
 }
 
 @keyframes side_bar_close {
     0% {
-        width: 300px;
+        width: v-bind(sideBarWidth);
     }
 
     100% {
@@ -144,13 +157,13 @@ function clear_all_chat() {
     }
 
     100% {
-        width: 300px;
+        width: v-bind(sideBarWidth);
     }
 }
 
 @keyframes side_bar_close_mobile {
     0% {
-        width: 300px;
+        width: v-bind(sideBarWidth);
     }
 
     100% {
@@ -169,11 +182,11 @@ function clear_all_chat() {
 }
 
 .sidebar_container {
-    width: 300px;
+    width: v-bind(sideBarWidth);
     flex-direction: column;
     align-items: center;
     background-color: #131313;
-    animation: side_bar_open 0.1s;
+    animation: side_bar_open v-bind(sideBarAnimationDuration);
 }
 
 .sidebar_container_close {
@@ -181,16 +194,16 @@ function clear_all_chat() {
     flex-direction: column;
     align-items: center;
     background-color: #131313;
-    animation: side_bar_close 0.1s;
+    animation: side_bar_close v-bind(sideBarAnimationDuration);
 }
 
 /* ---------------------------------------- Mobile Version */
 .sidebar_container_mobile {
-    width: 300px;
+    width: v-bind(sideBarWidth);
     flex-direction: column;
     align-items: center;
     background-color: #131313;
-    animation: side_bar_open_mobile 0.1s;
+    animation: side_bar_open_mobile v-bind(sideBarAnimationDuration);
 }
 
 .sidebar_container_close_mobile {
@@ -199,7 +212,7 @@ function clear_all_chat() {
     flex-direction: column;
     align-items: center;
     background-color: #131313;
-    animation: side_bar_close_mobile 0.1s;
+    animation: side_bar_close_mobile v-bind(sideBarAnimationDuration);
 }
 
 /* ---------------------------------------- Mobile Version */
@@ -211,7 +224,7 @@ function clear_all_chat() {
     align-items: center;
     padding: 10px;
     width: 100%;
-    gap: 5px;
+    gap: 2px;
 }
 
 .sidebar_header {

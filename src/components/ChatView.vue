@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps, defineEmits } from "vue";
-import ChatBar from "./ChatBar.vue";
+import ChatInputBar from "./ChatInputBar.vue";
 import ChatTextCell from "./ChatCellView/ChatTextCell.vue";
 import GeneratingCell from "./ChatCellView/GeneratingCell.vue";
 
@@ -8,6 +8,7 @@ const props = defineProps({
   isExpand: Boolean,
   isKhmer: Boolean,
   isGenerating: Boolean,
+  isSignedIn: Boolean,
   chatArray: Array,
 });
 
@@ -20,15 +21,18 @@ const make_mistake_english =
   "Bart Bong can make mistakes. Please double-check it.";
 const make_mistake_khmer =
   "កម្មវិធីបាទបងអាចនឹងផ្តល់នូវព័ត៌មានមិនត្រឹមត្រូវ សូមបងត្រួតពិនិត្យមើលផង";
+const signin_english = "Sign In";
+const signin_khmer = "ចូលគណនី";
 </script>
 
 <template>
   <div class="chat_view_container">
     <div class="chat_title_bar">
-      <div class="horizontal_container" style="gap: 5px;">
+
+      <div v-if="isSignedIn" class="horizontal_container" style="gap: 5px;">
         <img class="profile_div" src="/src/assets/default_profile.jpg" />
-        <img class="icon_button" src="/src/assets/icon/app.svg" />
       </div>
+      <div v-if="!isSignedIn" class="button_border">{{ isKhmer ? signin_khmer : signin_english }}</div>
 
       <div class="button_border">
         បាទបង (ឥតគិតថ្លៃ)
@@ -36,19 +40,32 @@ const make_mistake_khmer =
       </div>
 
       <div>
-        <img
-          v-if="!isExpand"
-          class="icon_button"
-          src="/src/assets/icon/menu.svg"
-          @click="emit('toggle-expand')"
-        />
+        <img v-if="!isExpand" class="icon_button" src="/src/assets/icon/menu.svg" @click="emit('toggle-expand')" />
       </div>
     </div>
 
     <div class="horizontal_line"></div>
 
+    <div v-if="chatArray.length != 0" class="chat_title_name_bar">
+      <div class="chat_title_name_bar_container">
+        fortnite
+
+        <div style="display: flex; flex-direction: row; gap: 5px;">
+
+          <div class="safe_button_border" style="padding: 5px">
+            <img style="width: 20px;" src="../assets/icon/bookmark_green.svg" />
+          </div>
+
+          <div class="warn_button_border" style="padding: 5px">
+            <img style="width: 20px;" src="../assets/icon/cleaning.svg" />
+          </div>
+
+        </div>
+      </div>
+    </div>
+
     <div class="main_chat_container">
-      <div v-if="chatArray.length == 0" class="chat_title_welcome">
+      <div v-if="chatArray.length == 0" :class="['chat_title_welcome', isKhmer ? '' : 'roboto_condensed']">
         {{ isKhmer ? message_khmer : message_english }}
       </div>
 
@@ -63,12 +80,8 @@ const make_mistake_khmer =
         </div>
       </div>
 
-      <ChatBar
-        :isKhmer="isKhmer"
-        :isGenerating="isGenerating"
-        :chatArray="chatArray"
-        @set-is-generating-to="(isActive) => emit('set-is-generating-to', isActive)"
-      />
+      <ChatInputBar :isKhmer="isKhmer" :isGenerating="isGenerating" :chatArray="chatArray"
+        @set-is-generating-to="(isActive) => emit('set-is-generating-to', isActive)" />
     </div>
 
     <div class="mini_friendly_reminder">
@@ -86,6 +99,25 @@ const make_mistake_khmer =
   100% {
     height: 100%;
   }
+}
+
+.chat_title_name_bar {
+  color: white;
+  width: 100%;
+  padding: 10px;
+  max-width: 800px;
+  border: 1px solid #383838;
+  box-sizing: border-box;
+  border-top: none;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.chat_title_name_bar_container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .mini_friendly_reminder {
@@ -115,11 +147,15 @@ const make_mistake_khmer =
 }
 
 .chat_title_welcome {
-  font-family: "Suwannaphum", sans-serif;
   color: white;
   padding: 20px;
   font-size: 30px;
   text-align: center;
+}
+
+.roboto_condensed {
+  font-family: "Roboto Condensed", sans-serif;
+  font-weight: bold;
 }
 
 .chat_view_container {
@@ -136,7 +172,9 @@ const make_mistake_khmer =
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
   box-sizing: border-box;
 }
 
@@ -150,7 +188,7 @@ const make_mistake_khmer =
 .main_chat_container {
   display: flex;
   width: 100%;
-  height: calc(100% - 105px);
+  height: calc(100% - 150px);
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -166,6 +204,15 @@ const make_mistake_khmer =
 @media (min-width: 900px) {
   .chat_title_welcome {
     font-size: 60px;
+  }
+}
+
+@media (max-width: 840px) {
+  .chat_title_name_bar {
+    border-left: none;
+    border-right: none;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
   }
 }
 </style>

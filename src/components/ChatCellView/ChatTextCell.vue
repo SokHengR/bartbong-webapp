@@ -111,7 +111,8 @@ onMounted(() => {
 
 .user_chat_container code,
 .assistant_chat_container code {
-    font-family: 'Courier New', monospace;
-    font-size: 0.9em;
+    background-color: #00000075;
+    padding: 2px 4px;
+    border-radius: 4px;
 }
 </style>
