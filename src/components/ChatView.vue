@@ -162,7 +162,7 @@ function scrollToBottom() {
 .chat_title_name_bar_container {
   display: flex;
   flex-direction: row;
-  height: 40px;
+  height: 45px;
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
