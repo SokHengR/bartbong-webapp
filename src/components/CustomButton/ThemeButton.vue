@@ -58,16 +58,16 @@ function onClick() {
 }
 
 .theme_button:hover {
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .danger_border_button {
-    border: 1px solid #491B1B;
-    background-color: #1A1212;
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    background-color: rgba(255, 0, 0, 0.1);
     color: #FF4A4A;
 }
 
 .danger_border_button:hover {
-    background-color: #491B1B;
+    background-color: rgba(255, 0, 0, 0.3);
 }
 </style>

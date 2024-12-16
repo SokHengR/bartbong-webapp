@@ -224,7 +224,7 @@ function clear_all_chat() {
   width: v-bind(sideBarWidth);
   flex-direction: column;
   align-items: center;
-  background-color: #131313;
+  background-color: #050505;
   animation: side_bar_open v-bind(sideBarAnimationDuration);
 }
 
@@ -232,7 +232,7 @@ function clear_all_chat() {
   width: 70px;
   flex-direction: column;
   align-items: center;
-  background-color: #131313;
+  background-color: #050505;
   animation: side_bar_close v-bind(sideBarAnimationDuration);
 }
 
@@ -241,7 +241,7 @@ function clear_all_chat() {
   width: v-bind(sideBarWidth);
   flex-direction: column;
   align-items: center;
-  background-color: #131313;
+  background-color: #050505;
   animation: side_bar_open_mobile v-bind(sideBarAnimationDuration);
 }
 
@@ -250,7 +250,7 @@ function clear_all_chat() {
   width: 0px;
   flex-direction: column;
   align-items: center;
-  background-color: #131313;
+  background-color: #050505;
   animation: side_bar_close_mobile v-bind(sideBarAnimationDuration);
 }
 

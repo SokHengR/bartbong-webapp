@@ -46,7 +46,7 @@ function scrollToBottom() {
         {{ isKhmer ? signin_khmer : signin_english }}
       </div>
 
-      <div class="button_border">
+      <div class="button_border no_break_line">
         បាទបង (ឥតគិតថ្លៃ)
         <img src="/src/assets/icon/expand_down.svg" />
       </div>
@@ -65,8 +65,23 @@ function scrollToBottom() {
 
     <div v-if="chatArray.length != 0" class="chat_title_name_bar">
       <div class="chat_title_name_bar_container">
-        fortnite
-
+        <img class="title_logo_profile" src="../assets/bart_bong_logo.jpg" />
+        <div
+          style="
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            gap: 1px;
+            overflow: hidden;
+          "
+        >
+          <label class="no_break_line" style="font-weight: bold">
+            San Nimith
+          </label>
+          <label class="no_break_line" style="font-size: small; color: gray">
+            Your online assistant
+          </label>
+        </div>
         <div style="display: flex; flex-direction: row; gap: 5px">
           <div class="safe_button_border" style="padding: 5px">
             <img style="width: 20px" src="../assets/icon/bookmark_green.svg" />
@@ -79,11 +94,13 @@ function scrollToBottom() {
       </div>
     </div>
 
-    <div class="main_chat_container">
-      <div
-        v-if="chatArray.length == 0"
-        :class="['chat_title_welcome', isKhmer ? '' : 'roboto_condensed']"
-      >
+    <div
+      class="main_chat_container"
+      :style="{
+        height: `calc(100% - ${chatArray.length > 0 ? '160px' : '100px'})`,
+      }"
+    >
+      <div v-if="chatArray.length == 0" class="chat_title_welcome">
         {{ isKhmer ? message_khmer : message_english }}
       </div>
 
@@ -110,9 +127,10 @@ function scrollToBottom() {
         "
         @scroll-to-bottom="scrollToBottom"
       />
+      
     </div>
 
-    <div class="mini_friendly_reminder">
+    <div class="mini_friendly_reminder no_break_line">
       {{ isKhmer ? make_mistake_khmer : make_mistake_english }}
     </div>
   </div>
@@ -144,14 +162,31 @@ function scrollToBottom() {
 .chat_title_name_bar_container {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  height: 40px;
   justify-content: space-between;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  gap: 10px;
+}
+
+.title_logo_profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  border: 1px solid #383838;
 }
 
 .mini_friendly_reminder {
+  flex: 1;
+  width: 100%;
   color: white;
   font-size: 12px;
-  padding: 4px;
+  text-align: center;
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  box-sizing: border-box;;
 }
 
 .chat_list_scroll_content {
@@ -162,7 +197,6 @@ function scrollToBottom() {
   box-sizing: border-box;
 }
 
-
 .chat_list_scrollview {
   position: relative;
   overflow-y: auto;
@@ -172,9 +206,10 @@ function scrollToBottom() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  scroll-behavior: smooth; /* Add smooth scrolling */
-  scrollbar-width: thin; /* For Firefox */
-  scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* For Firefox */
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  animation: chat_list_expansion 0.3s linear;
 }
 
 .chat_list_scrollview::-webkit-scrollbar {
@@ -195,6 +230,7 @@ function scrollToBottom() {
 }
 
 .chat_title_welcome {
+  font-family: "Koulen", sans-serif;;
   color: white;
   padding: 20px;
   font-size: 30px;
@@ -220,7 +256,7 @@ function scrollToBottom() {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 5px;
+  padding: 10px;
   padding-left: 20px;
   padding-right: 20px;
   box-sizing: border-box;
@@ -236,7 +272,6 @@ function scrollToBottom() {
 .main_chat_container {
   display: flex;
   width: 100%;
-  height: calc(100% - 150px);
   flex-direction: column;
   align-items: center;
   justify-content: center;
