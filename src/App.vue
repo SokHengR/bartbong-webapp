@@ -1,7 +1,3 @@
-<script setup>
-import ChatScreen from './view_controllers/ChatScreen.vue';
-</script>
-
 <template>
-  <ChatScreen />
+  <router-view></router-view>
 </template>
