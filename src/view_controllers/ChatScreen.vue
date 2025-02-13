@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import ChatView from "../components/ChatView.vue";
 import SideBar from "../components/SideBar.vue";
 
@@ -8,6 +8,13 @@ const isKhmer = ref(true);
 const chatArray = ref([]);
 const isGenerating = ref(true);
 const isSignedIn = ref(true);
+
+onMounted(() => {
+    const isKhmerLang = localStorage.getItem('is_khmer');
+    if (isKhmerLang !== null) {
+        isKhmer.value = isKhmerLang === "true";
+    }
+});
 
 function toggleExpand() {
   isExpand.value = !isExpand.value;
