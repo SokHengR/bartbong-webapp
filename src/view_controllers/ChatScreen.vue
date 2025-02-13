@@ -1,20 +1,33 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watchEffect } from "vue";
 import ChatView from "../components/ChatView.vue";
 import SideBar from "../components/SideBar.vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const isExpand = ref(false);
 const isKhmer = ref(true);
 const chatArray = ref([]);
 const isGenerating = ref(true);
-const isSignedIn = ref(true);
+const isSignedIn = ref(false);
 
 onMounted(() => {
     const isKhmerLang = localStorage.getItem('is_khmer');
     if (isKhmerLang !== null) {
         isKhmer.value = isKhmerLang === "true";
     }
+    const alreadySignedIn = localStorage.getItem('is_signed_in');
+    if (alreadySignedIn !== null) {
+      isSignedIn.value = alreadySignedIn === "true";
+    }
 });
+
+// watchEffect(() => {
+//   if (isSignedIn.value === false) {
+//     router.push('/login');
+//   }
+// });
 
 function toggleExpand() {
   isExpand.value = !isExpand.value;

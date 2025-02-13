@@ -34,6 +34,10 @@ function scrollToBottom() {
     }
   });
 }
+
+function presentLoginScreen() {
+  window.location.href = "/login";
+}
 </script>
 
 <template>
@@ -42,7 +46,7 @@ function scrollToBottom() {
       <div v-if="isSignedIn" class="horizontal_container" style="gap: 5px">
         <img class="profile_div" src="/src/assets/default_profile.jpg" />
       </div>
-      <div v-if="!isSignedIn" class="button_border">
+      <div v-if="!isSignedIn" class="button_border" @click='presentLoginScreen()'>
         {{ isKhmer ? signin_khmer : signin_english }}
       </div>
 
