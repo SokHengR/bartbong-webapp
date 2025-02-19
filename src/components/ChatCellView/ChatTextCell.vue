@@ -1,118 +1,169 @@
-<script setup>
-import { computed, onMounted } from 'vue'
-import { marked } from 'marked'
-import hljs from 'highlight.js'
-import 'highlight.js/styles/github-dark.css'
-
-const props = defineProps({
-    senderType: String,
-    contentText: String,
-})
-
-// Configure marked to use highlight.js for code blocks
-marked.setOptions({
-    highlight: function (code, lang) {
-        const language = hljs.getLanguage(lang) ? lang : 'plaintext'
-        try {
-            return hljs.highlight(code, { language }).value
-        } catch (error) {
-            return code
-        }
-    },
-    langPrefix: 'hljs language-',
-})
-
-// Compute the markdown-rendered content
-const renderedContent = computed(() => {
-    return marked.parse(props.contentText || '')
-})
-
-function isUser() {
-    return props.senderType === 'user'
-}
-
-// Add this to ensure highlighting is applied after rendering
-onMounted(() => {
-    hljs.highlightAll()
-})
-</script>
-
 <template>
-    <div :class="'chat_text_cellview ' + (isUser() ? 'for_user' : 'for_assistant')">
-        <div :class="isUser() ? 'user_chat_container' : 'assistant_chat_container'" v-html="renderedContent"
-            ref="contentRef"></div>
+    <div :class="['chat-cell', { 'user-cell': isUser }]">
+        <div class="content-bubble" :class="{ user: isUser }">
+            <div ref="markdownContent" class="markdown-content" v-html="processedContent"></div>
+        </div>
     </div>
 </template>
 
-<style>
-@keyframes chat_assistant_expansion {
-    from {
-        max-height: 0;
-        opacity: 0;
-    } to {
-        max-height: 1000px; /* Adjust this value if necessary */
-        opacity: 1;
-    }
+<script setup>
+import { ref, computed, onMounted, onUpdated } from 'vue'
+import { marked } from 'marked'
+import hljs from 'highlight.js'
+import DOMPurify from 'dompurify'
+
+const props = defineProps({
+    senderType: String,
+    contentText: String
+})
+
+const isUser = computed(() => props.senderType === 'user')
+const markdownContent = ref(null)
+
+// Configure marked
+marked.setOptions({
+    highlight: (code, lang) => {
+        const language = hljs.getLanguage(lang) ? lang : 'plaintext'
+        return hljs.highlight(code, { language }).value
+    },
+    breaks: true
+})
+
+// Process markdown content
+const processedContent = computed(() => {
+    const rawHtml = marked(props.contentText || '')
+    return DOMPurify.sanitize(rawHtml)
+})
+
+// Add code block decorations
+const processCodeBlocks = () => {
+    if (!markdownContent.value) return
+
+    markdownContent.value.querySelectorAll('pre').forEach((preElement) => {
+        if (preElement.dataset.processed) return
+
+        const codeElement = preElement.querySelector('code')
+        const language = [...codeElement.classList]
+            .find(c => c.startsWith('language-'))?.replace('language-', '') || 'code'
+
+        // Add code block header
+        const header = document.createElement('div')
+        header.className = 'code-title-bar'
+        header.innerHTML = `
+        <label class="language-code">${language}</label>
+        <button class="copy-button">Copy</button>
+      `
+
+        // Add copy functionality
+        const copyButton = header.querySelector('.copy-button')
+        copyButton.addEventListener('click', () => {
+            navigator.clipboard.writeText(codeElement.innerText)
+            copyButton.textContent = 'Copied!'
+            setTimeout(() => copyButton.textContent = 'Copy', 2000)
+        })
+
+        preElement.insertBefore(header, codeElement)
+        preElement.dataset.processed = true
+    })
 }
 
-.chat_text_cellview {
-    width: 100%;
+onMounted(processCodeBlocks)
+onUpdated(processCodeBlocks)
+</script>
+
+<style scoped>
+.chat-cell {
     display: flex;
-    flex-direction: row;
-    align-items: top;
-    padding-top: 10px;
-    box-sizing: border-box;
+    margin: 8px 0;
 }
 
-.for_user {
-    justify-content: right;
+.user-cell {
+    justify-content: flex-end;
 }
 
-.for_user p {
-    margin: 0px;
-}
-
-.for_assistant {
-    justify-content: left;
-}
-
-.user_chat_container {
-    word-wrap: break-word;
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: #398300;
+.content-bubble {
     max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #e5e5ea;
 }
 
-.assistant_chat_container {
-    word-wrap: break-word;
+.content-bubble.user {
+    background: #007AFF;
     color: white;
-    background-color: transparent;
-    box-sizing: border-box;
-    max-width: 100%;
-    animation: chat_assistant_expansion 0.5s ease-in-out;
+}
+
+.markdown-content :deep(*) {
+    margin: 0.2em 0;
+    line-height: 1.5;
+}
+
+.markdown-content :deep(h1) {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.markdown-content :deep(code) {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.markdown-content :deep(pre) {
+    position: relative;
+    background: rgb(55, 55, 55);
+    border: 1px solid #9d9d9d;
+    border-radius: 8px;
+    margin: 0.5em 0;
     overflow: hidden;
 }
 
-.user_chat_container pre {
-    background-color: rgba(255, 255, 255, 0.2) !important;
-    padding: 10px;
-    border-radius: 4px;
+.markdown-content :deep(pre code) {
+    background: none;
+    padding: 1em;
+    display: block;
     overflow-x: auto;
 }
 
-.assistant_chat_container pre {
-    background-color: rgba(0, 0, 0, 0.1) !important;
+::v-deep(.code-title-bar) {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0px;
     padding: 10px;
-    border-radius: 4px;
-    overflow-x: auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #9d9d9d;
+    background: rgb(0, 0, 0);
 }
 
-.user_chat_container code,
-.assistant_chat_container code {
-    background-color: #00000075;
-    padding: 2px 4px;
-    border-radius: 4px;
+::v-deep(.language-code) {
+    color: white;
+    font-weight: bold;
+}
+
+::v-deep(.language-code::first-letter) {
+    text-transform: uppercase;
+}
+
+::v-deep(.copy-button) {
+    background-color: transparent;
+    border: 1px solid transparent;
+    color: white;
+    cursor: pointer;
+}
+::v-deep(.copy-button:hover) {
+    border: 1px solid orange;
+    border-radius: 5px;;
+}
+
+.copy-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.content-bubble.user .copy-button {
+    color: #fff;
 }
 </style>
