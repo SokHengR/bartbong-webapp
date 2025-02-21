@@ -40,51 +40,37 @@ function add_new_message(user_type, message_content) {
   emit("scroll-to-bottom");
 }
 
-function fetch_api() {
+async function fetch_api() {
   try {
-    const api_key =
-      "Bearer banteaydev-L-yz1NuPaf0xRUiJydb0eW_hF6raMK5w1x9u6gMMVqk";
-    axios
-      .post(
-        "https://api.sannimith.com/v1/chat/completions",
-        {
-          model: "gpt-4o-mini",
-          messages: props.chatArray,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: api_key,
-          },
-        }
-      )
-      .then((response) => {
-        emit("set-is-generating-to", false);
-        console.log("isGenerating = " + props.isGenerating);
-        add_new_message("assistant", response.data.choices[0].message.content);
-      });
+    const response = await axios.post(
+      "https://bart-bong-server.onrender.com/v1/chat/completions",
+      props.chatArray // Send chatArray directly as the request body
+    );
+
+    console.log(response)
+
+    emit("set-is-generating-to", false);
+    
+    if (response.data && response.data.content) {
+      add_new_message(response.data.role, response.data.content); // Use role from response
+    } else {
+      console.error("Invalid response format:", response.data);
+    }
   } catch (error) {
     console.error("Error fetching data:", error);
+    emit("set-is-generating-to", false);
   }
 }
 </script>
 
 <template>
   <div class="chat_input_container">
-    <textarea
-      v-model="text"
-      @input="adjustHeight"
-      ref="textarea"
-      :style="{
-        height: height,
-        maxHeight: '200px',
-        minHeight: minHeight,
-        lineHeight: '1.5',
-      }"
-      :placeholder="isKhmer ? type_khmer : type_english"
-      rows="1"
-      class="chat_text_editor"
-    >
+    <textarea v-model="text" @input="adjustHeight" ref="textarea" :style="{
+      height: height,
+      maxHeight: '200px',
+      minHeight: minHeight,
+      lineHeight: '1.5',
+    }" :placeholder="isKhmer ? type_khmer : type_english" rows="1" class="chat_text_editor">
     </textarea>
     <div class="chat_bar_tools">
       <div class="horizontal_container">
@@ -95,12 +81,8 @@ function fetch_api() {
           <img src="../assets/icon/auto_fix.svg" />
         </div>
       </div>
-      <div
-        class="button_border"
-        style="padding: 5px"
-        @click="send_message(text)"
-        :class="{ disabled: !isSendButtonEnabled }"
-      >
+      <div class="button_border" style="padding: 5px" @click="send_message(text)"
+        :class="{ disabled: !isSendButtonEnabled }">
         <img src="../assets/icon/arrow_upward.svg" />
       </div>
     </div>

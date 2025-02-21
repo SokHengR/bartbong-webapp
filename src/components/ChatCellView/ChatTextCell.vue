@@ -82,15 +82,16 @@ onUpdated(processCodeBlocks)
 }
 
 .content-bubble {
-    max-width: 80%;
+    color: white;
+    max-width: 92%;
     padding: 12px 16px;
     border-radius: 12px;
-    background: #e5e5ea;
+    background: transparent;
 }
 
 .content-bubble.user {
+    max-width: 80%;
     background: #007AFF;
-    color: white;
 }
 
 .markdown-content :deep(*) {
