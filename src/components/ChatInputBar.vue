@@ -43,7 +43,7 @@ function add_new_message(user_type, message_content) {
 async function fetch_api() {
   try {
     const response = await axios.post(
-      "https://bart-bong-server.onrender.com/v1/chat/completions",
+      "https://server.bartbong.com/v1/chat/completions",
       props.chatArray // Send chatArray directly as the request body
     );
 
