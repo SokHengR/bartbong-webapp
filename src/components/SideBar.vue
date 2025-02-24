@@ -22,6 +22,7 @@ const props = defineProps({
 });
 
 const sideBarWidth = "350px";
+const sideBarWidthMobile = "270px";
 const sideBarAnimationDuration = "0.3s";
 
 const justify_space = "justify-content: space-between;";
@@ -196,13 +197,13 @@ function clear_all_chat() {
   }
 
   100% {
-    width: v-bind(sideBarWidth);
+    width: v-bind(sideBarWidthMobile);
   }
 }
 
 @keyframes side_bar_close_mobile {
   0% {
-    width: v-bind(sideBarWidth);
+    width: v-bind(sideBarWidthMobile);
   }
 
   100% {
@@ -239,7 +240,7 @@ function clear_all_chat() {
 
 /* ---------------------------------------- Mobile Version */
 .sidebar_container_mobile {
-  width: v-bind(sideBarWidth);
+  width: v-bind(sideBarWidthMobile);
   flex-direction: column;
   align-items: center;
   background-color: #050505;

@@ -72,6 +72,14 @@ onUpdated(processCodeBlocks)
 </script>
 
 <style scoped>
+@keyframes expandHeight {
+    from {
+        height: 0px;
+    } to {
+        height: auto;
+    }
+}
+
 .chat-cell {
     display: flex;
     margin: 8px 0;
@@ -87,11 +95,13 @@ onUpdated(processCodeBlocks)
     padding: 12px 16px;
     border-radius: 12px;
     background: transparent;
+    animation: expandHeight 0.5s ease-in-out;
 }
 
 .content-bubble.user {
     max-width: 80%;
     background: #007AFF;
+    animation: none;
 }
 
 .markdown-content :deep(*) {
