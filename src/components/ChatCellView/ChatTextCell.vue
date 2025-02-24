@@ -74,9 +74,10 @@ onUpdated(processCodeBlocks)
 <style scoped>
 @keyframes expandHeight {
     from {
-        height: 0px;
-    } to {
-        height: auto;
+        max-height: 0px;
+    }
+    to {
+        max-height: 10000px;
     }
 }
 
@@ -92,10 +93,11 @@ onUpdated(processCodeBlocks)
 .content-bubble {
     color: white;
     max-width: 92%;
+    overflow: hidden;
     padding: 12px 16px;
     border-radius: 12px;
     background: transparent;
-    animation: expandHeight 0.5s ease-in-out;
+    animation: expandHeight 3s ease-in-out;
 }
 
 .content-bubble.user {
