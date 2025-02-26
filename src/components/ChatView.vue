@@ -44,6 +44,9 @@ function presentLoginScreen() {
   <div class="chat_view_container">
     <div class="chat_title_bar">
 
+      <div class="icon_button disappear_on_mobile">
+      </div>
+
       <div class="chat_title_name_bar_container">
         <img class="title_logo_profile" src="../assets/bart_bong_logo.jpg" />
         <div class="title_vertical_container">
@@ -63,7 +66,7 @@ function presentLoginScreen() {
 
     <div class="horizontal_line"></div>
 
-    <div class="main_chat_container" style="height: calc(100% - 120px);">
+    <div class="main_chat_container" style="height: calc(100% - 111px);">
       <div v-if="chatArray.length == 0" class="chat_title_welcome">
         {{ isKhmer ? message_khmer : message_english }}
       </div>
@@ -100,6 +103,10 @@ function presentLoginScreen() {
   }
 }
 
+.disappear_on_mobile {
+  display: flex;
+}
+
 .title_vertical_container {
   display: flex;
   flex: 1;
@@ -129,6 +136,17 @@ function presentLoginScreen() {
   box-sizing: border-box;
   overflow: hidden;
   gap: 10px;
+  cursor: pointer;
+}
+
+.chat_title_name_bar_container label {
+  cursor: inherit;
+}
+
+.chat_title_name_bar_container:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  padding: 5px;
 }
 
 .title_logo_profile {
@@ -257,6 +275,10 @@ function presentLoginScreen() {
     border-right: none;
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
+  }
+
+  .disappear_on_mobile {
+    display: none;
   }
 }
 </style>

@@ -235,6 +235,7 @@ function clear_all_chat() {
   flex-direction: column;
   align-items: center;
   background-color: #050505;
+  border-left: 1px solid #383838;
   animation: side_bar_close v-bind(sideBarAnimationDuration);
 }
 
