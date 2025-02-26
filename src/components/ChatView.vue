@@ -43,76 +43,32 @@ function presentLoginScreen() {
 <template>
   <div class="chat_view_container">
     <div class="chat_title_bar">
-      <div v-if="isSignedIn" class="horizontal_container" style="gap: 5px">
-        <img class="profile_div" src="/src/assets/default_profile.jpg" />
-      </div>
-      <div v-if="!isSignedIn" class="button_border" @click='presentLoginScreen()'>
-        {{ isKhmer ? signin_khmer : signin_english }}
-      </div>
 
-      <div class="button_border no_break_line">
-        បាទបង (ឥតគិតថ្លៃ)
-        <img src="/src/assets/icon/expand_down.svg" />
-      </div>
-
-      <div>
-        <img
-          v-if="!isExpand"
-          class="icon_button"
-          src="/src/assets/icon/menu.svg"
-          @click="emit('toggle-expand')"
-        />
-      </div>
-    </div>
-
-    <div class="horizontal_line"></div>
-
-    <div v-if="chatArray.length != 0" class="chat_title_name_bar">
       <div class="chat_title_name_bar_container">
         <img class="title_logo_profile" src="../assets/bart_bong_logo.jpg" />
-        <div
-          style="
-            display: flex;
-            flex: 1;
-            flex-direction: column;
-            gap: 1px;
-            overflow: hidden;
-          "
-        >
-          <label class="no_break_line" style="font-weight: bold">
-            San Nimith
+        <div class="title_vertical_container">
+          <label class="no_break_line" style="font-weight: bold; color: white">
+            BART BONG
           </label>
           <label class="no_break_line" style="font-size: small; color: gray">
             Your online assistant
           </label>
         </div>
-        <div style="display: flex; flex-direction: row; gap: 5px">
-          <div class="safe_button_border" style="padding: 5px">
-            <img style="width: 20px" src="../assets/icon/bookmark_green.svg" />
-          </div>
+      </div>
 
-          <div class="warn_button_border" style="padding: 5px">
-            <img style="width: 20px" src="../assets/icon/cleaning.svg" />
-          </div>
-        </div>
+      <div>
+        <img v-if="!isExpand" class="icon_button" src="/src/assets/icon/menu.svg" @click="emit('toggle-expand')" />
       </div>
     </div>
 
-    <div
-      class="main_chat_container"
-      :style="{
-        height: `calc(100% - ${chatArray.length > 0 ? '160px' : '100px'})`,
-      }"
-    >
+    <div class="horizontal_line"></div>
+
+    <div class="main_chat_container" style="height: calc(100% - 120px);">
       <div v-if="chatArray.length == 0" class="chat_title_welcome">
         {{ isKhmer ? message_khmer : message_english }}
       </div>
 
-      <div
-        v-if="chatArray.length > 0"
-        class="chat_list_scrollview"
-        ref="chatListScrollView"
-      >
+      <div v-if="chatArray.length > 0" class="chat_list_scrollview" ref="chatListScrollView">
         <div class="chat_list_scroll_content">
           <div v-for="(chat, index) in chatArray" :key="index">
             <ChatTextCell :senderType="chat.role" :contentText="chat.content" />
@@ -122,16 +78,9 @@ function presentLoginScreen() {
         </div>
       </div>
 
-      <ChatInputBar
-        :isKhmer="isKhmer"
-        :isGenerating="isGenerating"
-        :chatArray="chatArray"
-        @set-is-generating-to="
-          (isActive) => emit('set-is-generating-to', isActive)
-        "
-        @scroll-to-bottom="scrollToBottom"
-      />
-      
+      <ChatInputBar :isKhmer="isKhmer" :isGenerating="isGenerating" :chatArray="chatArray" @set-is-generating-to="
+        (isActive) => emit('set-is-generating-to', isActive)
+      " @scroll-to-bottom="scrollToBottom" />
     </div>
 
     <div class="mini_friendly_reminder no_break_line">
@@ -149,6 +98,14 @@ function presentLoginScreen() {
   100% {
     height: 100%;
   }
+}
+
+.title_vertical_container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1px;
+  overflow: hidden;
 }
 
 .chat_title_name_bar {
@@ -190,7 +147,7 @@ function presentLoginScreen() {
   padding: 10px;
   padding-left: 20px;
   padding-right: 20px;
-  box-sizing: border-box;;
+  box-sizing: border-box;
 }
 
 .chat_list_scroll_content {
@@ -234,7 +191,7 @@ function presentLoginScreen() {
 }
 
 .chat_title_welcome {
-  font-family: "Koulen", sans-serif;;
+  font-family: "Koulen", sans-serif;
   color: white;
   padding: 20px;
   font-size: 30px;
