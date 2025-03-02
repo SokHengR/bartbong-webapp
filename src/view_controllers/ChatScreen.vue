@@ -3,6 +3,9 @@ import { ref, onMounted, watchEffect } from "vue";
 import ChatView from "../components/ChatView.vue";
 import SideBar from "../components/SideBar.vue";
 import { useRouter } from "vue-router";
+import ReviewDialog from "./pop_up_dialog/DevelopmentDialog.vue";
+import ProfileDialog from "./pop_up_dialog/ProfileDialog.vue";
+import DevelopmentDialog from "./pop_up_dialog/DevelopmentDialog.vue";
 
 const router = useRouter();
 
@@ -11,11 +14,13 @@ const isKhmer = ref(true);
 const chatArray = ref([]);
 const isGenerating = ref(true);
 const isSignedIn = ref(false);
+const acceptDevelopmentWarning = ref(false)
+const showProfileDialog = ref(false)
 
 onMounted(() => {
     const isKhmerLang = localStorage.getItem('is_khmer');
     if (isKhmerLang !== null) {
-        isKhmer.value = isKhmerLang === "true";
+        isKhmer.value = isKhmerLang === "false";
     }
     const alreadySignedIn = localStorage.getItem('is_signed_in');
     if (alreadySignedIn !== null) {
@@ -42,9 +47,19 @@ function setIsGeneratingTo(isActive) {
   console.log("Setting isGenerating to: ", isActive);
   isGenerating.value = isActive;
 }
+
+function closeNoticeDialog() {
+  acceptDevelopmentWarning.value = true;
+}
+
+function setProfileDialog(isActive) {
+  showProfileDialog.value = isActive;
+}
 </script>
 
 <template>
+  <ProfileDialog v-if="showProfileDialog" @close_profile_dialog="setProfileDialog" />
+  <DevelopmentDialog v-if="!acceptDevelopmentWarning" @close_notice_dialog="closeNoticeDialog" />
   <div class="split_view_container">
     <ChatView
       :isExpand="isExpand"
@@ -54,6 +69,7 @@ function setIsGeneratingTo(isActive) {
       :chatArray="chatArray"
       @toggle-expand="toggleExpand"
       @set-is-generating-to="setIsGeneratingTo"
+      @showProfileDialog="setProfileDialog"
     />
     <SideBar
       :isExpand="isExpand"

@@ -12,7 +12,7 @@ const props = defineProps({
   chatArray: Array,
 });
 
-const emit = defineEmits(["toggle-expand", "set-is-generating-to"]);
+const emit = defineEmits(["toggle-expand", "set-is-generating-to", "showProfileDialog"]);
 
 const chatListScrollView = ref(null);
 
@@ -49,7 +49,7 @@ function presentLoginScreen() {
 
       <div class="chat_title_name_bar_container">
         <img class="title_logo_profile" src="../assets/bart_bong_logo.jpg" />
-        <div class="title_vertical_container">
+        <div class="title_vertical_container" @click="emit('showProfileDialog', true)">
           <label class="no_break_line" style="font-weight: bold; color: white">
             BART BONG
           </label>
