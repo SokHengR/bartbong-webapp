@@ -47,9 +47,9 @@ function presentLoginScreen() {
       <div class="icon_button disappear_on_mobile">
       </div>
 
-      <div class="chat_title_name_bar_container">
+      <div class="chat_title_name_bar_container" @click="emit('showProfileDialog', true)">
         <img class="title_logo_profile" src="../assets/bart_bong_logo.jpg" />
-        <div class="title_vertical_container" @click="emit('showProfileDialog', true)">
+        <div class="title_vertical_container">
           <label class="no_break_line" style="font-weight: bold; color: white">
             BART BONG
           </label>
