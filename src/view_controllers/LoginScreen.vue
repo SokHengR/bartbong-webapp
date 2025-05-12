@@ -87,8 +87,8 @@ function toggleLanguage() {
 
     <div class="language_button_container">
         <div class=" language_button point_over" @click="toggleLanguage()">
-            <img style="width: 25px; object-fit: cover;" :src='isKhmer ? usFlag : khFlag' />
-            {{ isKhmer ? 'English' : 'ភាសាខ្មែរ' }}
+            <img style="width: 25px; object-fit: cover;" :src='isKhmer ? khFlag : usFlag' />
+            {{ isKhmer ? 'ភាសាខ្មែរ' : 'English' }}
         </div>
     </div>
 

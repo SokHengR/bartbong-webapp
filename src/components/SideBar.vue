@@ -64,29 +64,14 @@ function clear_all_chat() {
 </script>
 
 <template>
-  <div
-    :class="
-      isExpand
-        ? 'sidebar_container' + desktopClass()
-        : 'sidebar_container_close' + desktopClass()
-    "
-  >
+  <div :class="isExpand
+      ? 'sidebar_container' + desktopClass()
+      : 'sidebar_container_close' + desktopClass()
+    ">
     <div class="inner_sidebar_container">
-      <div
-        class="sidebar_header"
-        :style="isExpand ? justify_space : justify_center"
-      >
-        <img
-          v-if="isExpand"
-          class="icon_button"
-          @click="$emit('toggle-expand')"
-          :src="menuIcon"
-          alt="Toggle Menu"
-        />
-        <img
-          style="height: 30px"
-          :src="isExpand ? bart_bong_long : bart_bong_short"
-        />
+      <div class="sidebar_header" :style="isExpand ? justify_space : justify_center">
+        <img v-if="isExpand" class="icon_button" @click="$emit('toggle-expand')" :src="menuIcon" alt="Toggle Menu" />
+        <img style="height: 30px" :src="isExpand ? bart_bong_long : bart_bong_short" />
         <div v-if="isExpand" style="width: 30px; height: 30px"></div>
       </div>
     </div>
@@ -94,37 +79,18 @@ function clear_all_chat() {
     <div v-if="isExpand" class="horizontal_line"></div>
 
     <div v-if="isExpand" class="inner_sidebar_container">
-      <ThemeButton
-        :buttonText="isKhmer ? new_chat_khmer : new_chat_english"
-        :imageSrc="addIcon"
-        identification="new_chat_label"
-        haveBorder
-      />
-      <ThemeButton
-        :buttonText="isKhmer ? assistant_khmer : assistant_english"
-        :imageSrc="group3"
-        identification="standard_icon_size"
-      />
-      <ThemeButton
-        :buttonText="isKhmer ? file_khmer : file_english"
-        :imageSrc="folderIcon"
-        identification="standard_icon_size"
-      />
-      <ThemeButton
-        :buttonText="isKhmer ? save_khmer : save_english"
-        :imageSrc="bookmarkIcon"
-        identification="standard_icon_size"
-      />
-      <ThemeButton
-        :buttonText="isKhmer ? feedback_khmer : feedback_english"
-        :imageSrc="reviewIcon"
-        identification="feedback_label"
-      />
-      <ThemeButton
-        :buttonText="isKhmer ? setting_khmer : setting_english"
-        :imageSrc="settingIcon"
-        identification="setting_label"
-      />
+      <ThemeButton :buttonText="isKhmer ? new_chat_khmer : new_chat_english" :imageSrc="addIcon"
+        identification="new_chat_label" haveBorder />
+      <ThemeButton :buttonText="isKhmer ? assistant_khmer : assistant_english" :imageSrc="group3"
+        identification="standard_icon_size" />
+      <ThemeButton :buttonText="isKhmer ? file_khmer : file_english" :imageSrc="folderIcon"
+        identification="standard_icon_size" />
+      <ThemeButton :buttonText="isKhmer ? save_khmer : save_english" :imageSrc="bookmarkIcon"
+        identification="standard_icon_size" />
+      <ThemeButton :buttonText="isKhmer ? feedback_khmer : feedback_english" :imageSrc="reviewIcon"
+        identification="feedback_label" />
+      <ThemeButton :buttonText="isKhmer ? setting_khmer : setting_english" :imageSrc="settingIcon"
+        identification="setting_label" />
     </div>
 
     <div v-if="!isExpand && isDesktop" class="inner_sidebar_container">
@@ -158,13 +124,8 @@ function clear_all_chat() {
     <div v-if="isExpand" class="horizontal_line"></div>
 
     <div v-if="isExpand" class="inner_sidebar_container">
-      <ThemeButton
-        :buttonText="isKhmer ? clear_khmer : clear_english"
-        :imageSrc="deleteIcon"
-        identification="delete_label"
-        isRed
-        @click="clear_all_chat()"
-      />
+      <ThemeButton :buttonText="isKhmer ? clear_khmer : clear_english" :imageSrc="deleteIcon"
+        identification="delete_label" isRed @click="clear_all_chat()" />
     </div>
   </div>
 </template>
@@ -263,7 +224,6 @@ function clear_all_chat() {
 .inner_sidebar_container {
   display: flex;
   flex-direction: column;
-  box-sizing: border-box;
   align-items: center;
   padding: 10px;
   width: 100%;

@@ -1,6 +1,7 @@
 <template>
-    <div class="dark_background show_dialog_animation">
+    <div class="dark_background show_dialog_animation first_index">
         <div class="dialog_container vertical_container zoom_dialog_animation">
+            <img :src="warn_icon" class="warn_icon_image">
             <label style="font-weight: bold; font-size: 25px; text-align: center;">
                 {{ isKhmer ? title_khmer : title_english }}
             </label>
@@ -16,6 +17,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import warn_icon from "/src/assets/icon/new_releases.svg"
 
 const isKhmer = ref(true);
 
@@ -46,6 +48,15 @@ function closeAlert() {
 </script>
 
 <style scoped>
+.first_index {
+    z-index: 1;
+}
+
+.warn_icon_image {
+    width: 70px;
+    height: 70px;
+}
+
 .understand_button {
     width: 100%;
     font-weight: bold;
