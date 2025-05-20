@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUpdated } from 'vue'
+import { ref, computed, onMounted, onUpdated, defineProps } from 'vue'
 import { marked } from 'marked'
 import hljs from 'highlight.js'
 import DOMPurify from 'dompurify'

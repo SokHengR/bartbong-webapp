@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineEmits } from "vue";
 import warn_icon from "/src/assets/icon/new_releases.svg"
 
 const isKhmer = ref(true);

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, defineEmits } from "vue";
 import profileImage from "/src/assets/bart_bong_logo.jpg";
 import verifiedIcon from "/src/assets/icon/verified_icon.svg";
 
@@ -34,7 +34,7 @@ function closeAlert() {
                     BART BONG
                     <img :src="verifiedIcon">
                 </div>
-                <div style="text-align: center; font-size: 17px; color: gray">
+                <div style="text-align: center; font-size: 15px; color: gray">
                     Your online assistant
                 </div>
                 <div class="prompt_label">
@@ -85,7 +85,7 @@ function closeAlert() {
 
 .title_verify_label {
     font-weight: bold;
-    font-size: 25px;
+    font-size: 20px;
     display: flex;
     text-align: center;
     justify-content: center;
@@ -115,7 +115,7 @@ function closeAlert() {
 .profile_close_button {
     width: 100%;
     font-weight: bold;
-    font-size: 17px;
-    padding: 10px;
+    font-size: 15px;
+    padding: 5px;
 }
 </style>

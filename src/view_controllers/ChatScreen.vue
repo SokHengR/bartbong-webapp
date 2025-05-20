@@ -14,25 +14,25 @@ const isKhmer = ref(true);
 const chatArray = ref([]);
 const isGenerating = ref(true);
 const isSignedIn = ref(false);
-const acceptDevelopmentWarning = ref(false)
-const showProfileDialog = ref(false)
+const acceptDevelopmentWarning = ref(false);
+const showProfileDialog = ref(false);
 
 onMounted(() => {
-    const isKhmerLang = localStorage.getItem('is_khmer');
-    if (isKhmerLang !== null) {
-        isKhmer.value = isKhmerLang === "false";
-    }
-    const alreadySignedIn = localStorage.getItem('is_signed_in');
-    if (alreadySignedIn !== null) {
-      isSignedIn.value = alreadySignedIn === "true";
-    }
+  const isKhmerLang = localStorage.getItem("is_khmer");
+  if (isKhmerLang !== null) {
+    isKhmer.value = isKhmerLang === "false";
+  }
+  const alreadySignedIn = localStorage.getItem("is_signed_in");
+  if (alreadySignedIn !== null) {
+    isSignedIn.value = alreadySignedIn === "true";
+  }
 });
 
-// watchEffect(() => {
-//   if (isSignedIn.value === false) {
-//     router.push('/login');
-//   }
-// });
+watchEffect(() => {
+  if (isSignedIn.value === false) {
+    router.push("/login");
+  }
+});
 
 function toggleExpand() {
   isExpand.value = !isExpand.value;
@@ -55,11 +55,22 @@ function closeNoticeDialog() {
 function setProfileDialog(isActive) {
   showProfileDialog.value = isActive;
 }
+
+function toggleLanguage() {
+  isKhmer.value = !isKhmer.value;
+  localStorage.setItem("is_khmer", isKhmer.value ? "true" : "false");
+}
 </script>
 
 <template>
-  <ProfileDialog v-if="showProfileDialog" @close_profile_dialog="setProfileDialog" />
-  <DevelopmentDialog v-if="!acceptDevelopmentWarning" @close_notice_dialog="closeNoticeDialog" />
+  <ProfileDialog
+    v-if="showProfileDialog"
+    @close_profile_dialog="setProfileDialog"
+  />
+  <DevelopmentDialog
+    v-if="!acceptDevelopmentWarning"
+    @close_notice_dialog="closeNoticeDialog"
+  />
   <div class="split_view_container">
     <ChatView
       :isExpand="isExpand"
@@ -78,6 +89,7 @@ function setProfileDialog(isActive) {
       :chatList="chatArray"
       @toggle-expand="toggleExpand"
       @clear-all-chat="clearAllChat"
+      @toggle-language="toggleLanguage"
     />
   </div>
   <div v-if="isExpand" class="overlay_sidebar">
@@ -88,6 +100,7 @@ function setProfileDialog(isActive) {
       :chatList="chatArray"
       @toggle-expand="toggleExpand"
       @clear-all-chat="clearAllChat"
+      @toggle-language="toggleLanguage"
     />
     <div class="decoy_sidebar" @click="toggleExpand"></div>
   </div>

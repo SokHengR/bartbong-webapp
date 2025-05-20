@@ -13,7 +13,10 @@ import settingIcon from "/src/assets/icon/setting.svg";
 import deleteIcon from "/src/assets/icon/delete.svg";
 import menuIcon from "/src/assets/icon/menu.svg";
 
-const emit = defineEmits(["toggle-expand", "clear-all-chat"]);
+import england_flag from "../assets/icon/us_flag.svg";
+import cambodia_flag from "../assets/icon/kh_flag.svg";
+
+const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language"]);
 
 const props = defineProps({
   isExpand: Boolean,
@@ -61,6 +64,9 @@ function clear_all_chat() {
   emit("toggle-expand");
   emit("clear-all-chat");
 }
+function toggle_sys_language() {
+  emit("toggle-language");
+}
 </script>
 
 <template>
@@ -72,24 +78,24 @@ function clear_all_chat() {
       <div class="sidebar_header" :style="isExpand ? justify_space : justify_center">
         <img v-if="isExpand" class="icon_button" @click="$emit('toggle-expand')" :src="menuIcon" alt="Toggle Menu" />
         <img style="height: 30px" :src="isExpand ? bart_bong_long : bart_bong_short" />
-        <div v-if="isExpand" style="width: 30px; height: 30px"></div>
+        <img style="height: 30px; width: 30px" class="icon_button" @click="toggle_sys_language()" :src="props.isKhmer ? cambodia_flag : england_flag" /> 
       </div>
     </div>
 
     <div v-if="isExpand" class="horizontal_line"></div>
 
     <div v-if="isExpand" class="inner_sidebar_container">
-      <ThemeButton :buttonText="isKhmer ? new_chat_khmer : new_chat_english" :imageSrc="addIcon"
+      <ThemeButton :buttonText="props.isKhmer ? new_chat_khmer : new_chat_english" :imageSrc="addIcon"
         identification="new_chat_label" haveBorder />
-      <ThemeButton :buttonText="isKhmer ? assistant_khmer : assistant_english" :imageSrc="group3"
+      <ThemeButton :buttonText="props.isKhmer ? assistant_khmer : assistant_english" :imageSrc="group3"
         identification="standard_icon_size" />
-      <ThemeButton :buttonText="isKhmer ? file_khmer : file_english" :imageSrc="folderIcon"
+      <ThemeButton :buttonText="props.isKhmer ? file_khmer : file_english" :imageSrc="folderIcon"
         identification="standard_icon_size" />
-      <ThemeButton :buttonText="isKhmer ? save_khmer : save_english" :imageSrc="bookmarkIcon"
+      <ThemeButton :buttonText="props.isKhmer ? save_khmer : save_english" :imageSrc="bookmarkIcon"
         identification="standard_icon_size" />
-      <ThemeButton :buttonText="isKhmer ? feedback_khmer : feedback_english" :imageSrc="reviewIcon"
+      <ThemeButton :buttonText="props.isKhmer ? feedback_khmer : feedback_english" :imageSrc="reviewIcon"
         identification="feedback_label" />
-      <ThemeButton :buttonText="isKhmer ? setting_khmer : setting_english" :imageSrc="settingIcon"
+      <ThemeButton :buttonText="props.isKhmer ? setting_khmer : setting_english" :imageSrc="settingIcon"
         identification="setting_label" />
     </div>
 
@@ -124,7 +130,7 @@ function clear_all_chat() {
     <div v-if="isExpand" class="horizontal_line"></div>
 
     <div v-if="isExpand" class="inner_sidebar_container">
-      <ThemeButton :buttonText="isKhmer ? clear_khmer : clear_english" :imageSrc="deleteIcon"
+      <ThemeButton :buttonText="props.isKhmer ? clear_khmer : clear_english" :imageSrc="deleteIcon"
         identification="delete_label" isRed @click="clear_all_chat()" />
     </div>
   </div>
@@ -224,6 +230,7 @@ function clear_all_chat() {
 .inner_sidebar_container {
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   align-items: center;
   padding: 10px;
   width: 100%;
