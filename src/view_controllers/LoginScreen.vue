@@ -8,6 +8,8 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
+  setPersistence, // Import setPersistence
+  browserLocalPersistence // Import persistence type
 } from "firebase/auth";
 import { auth } from "../firebase";
 
@@ -60,9 +62,14 @@ function toggleLanguage() {
   localStorage.setItem("is_khmer", isKhmer.value.toString());
 }
 
-function loginWithGoogle() {
+async function loginWithGoogle() {
   const provider = new GoogleAuthProvider();
-  signInWithRedirect(auth, provider);
+  try {
+    await setPersistence(auth, browserLocalPersistence); // Set persistence before redirect
+    signInWithRedirect(auth, provider);
+  } catch (error) {
+    console.error("Error setting persistence or signing in with Google:", error);
+  }
 }
 
 async function loginWithEmail() {
@@ -72,6 +79,7 @@ async function loginWithEmail() {
   }
 
   try {
+    await setPersistence(auth, browserLocalPersistence); // Set persistence before signing in
     const userCredential = await signInWithEmailAndPassword(
       auth,
       emailInput.value,
@@ -110,7 +118,7 @@ async function loginWithEmail() {
         isKhmer ? toContinueKhmer : toContinueEnglish
       }}</label>
 
-      <form @submit.prevent="loginWithEmail">
+      <form @submit.prevent="loginWithEmail" style="width: 100%">
         <input
           class="custom_input_style margin_top_ten"
           v-model="emailInput"
@@ -217,7 +225,7 @@ async function loginWithEmail() {
   width: 100%;
   align-items: center;
   justify-content: center;
-  gap: 50px;
+  gap: 20px;
 }
 
 .cover_image_background {
@@ -327,6 +335,9 @@ async function loginWithEmail() {
 @media (max-width: 900px) {
   .the_cover {
     display: none;
+  }
+  .login_form_container {
+    width: 100%;
   }
 }
 </style>
