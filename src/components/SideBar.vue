@@ -16,12 +16,13 @@ import menuIcon from "/src/assets/icon/menu.svg";
 import england_flag from "../assets/icon/us_flag.svg";
 import cambodia_flag from "../assets/icon/kh_flag.svg";
 
-const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language"]);
+const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language", "show-feedback-dialog"]);
 
 const props = defineProps({
   isExpand: Boolean,
   isKhmer: Boolean,
   isDesktop: Boolean,
+  showFeedback: Boolean,
 });
 
 const sideBarWidth = "350px";
@@ -34,7 +35,7 @@ const justify_center = "justify-content: center;";
 const new_chat_english = "New Chat";
 const new_chat_khmer = "បង្កើតការពិភាក្សាថ្មី";
 
-const assistant_english = "My Assistant";
+const assistant_english = "My Companion";
 const assistant_khmer = "ជំនួយការរបស់បង";
 
 const file_english = "My File";
@@ -67,18 +68,22 @@ function clear_all_chat() {
 function toggle_sys_language() {
   emit("toggle-language");
 }
+function show_feedback_dialog() {
+  emit("show-feedback-dialog");
+}
 </script>
 
 <template>
   <div :class="isExpand
-      ? 'sidebar_container' + desktopClass()
-      : 'sidebar_container_close' + desktopClass()
+    ? 'sidebar_container' + desktopClass()
+    : 'sidebar_container_close' + desktopClass()
     ">
     <div class="inner_sidebar_container">
       <div class="sidebar_header" :style="isExpand ? justify_space : justify_center">
         <img v-if="isExpand" class="icon_button" @click="$emit('toggle-expand')" :src="menuIcon" alt="Toggle Menu" />
         <img style="height: 30px" :src="isExpand ? bart_bong_long : bart_bong_short" />
-        <img style="height: 30px; width: 30px" class="icon_button" @click="toggle_sys_language()" :src="props.isKhmer ? cambodia_flag : england_flag" /> 
+        <img v-if="isExpand" style="height: 30px; width: 30px" class="icon_button" @click="toggle_sys_language()"
+          :src="props.isKhmer ? cambodia_flag : england_flag" />
       </div>
     </div>
 
@@ -88,13 +93,13 @@ function toggle_sys_language() {
       <ThemeButton :buttonText="props.isKhmer ? new_chat_khmer : new_chat_english" :imageSrc="addIcon"
         identification="new_chat_label" haveBorder />
       <ThemeButton :buttonText="props.isKhmer ? assistant_khmer : assistant_english" :imageSrc="group3"
-        identification="standard_icon_size" />
+        identification="standard_icon_size" @click="$router.push('/chum')"/>
       <ThemeButton :buttonText="props.isKhmer ? file_khmer : file_english" :imageSrc="folderIcon"
         identification="standard_icon_size" />
       <ThemeButton :buttonText="props.isKhmer ? save_khmer : save_english" :imageSrc="bookmarkIcon"
         identification="standard_icon_size" />
       <ThemeButton :buttonText="props.isKhmer ? feedback_khmer : feedback_english" :imageSrc="reviewIcon"
-        identification="feedback_label" />
+        identification="feedback_label" @click="show_feedback_dialog()" />
       <ThemeButton :buttonText="props.isKhmer ? setting_khmer : setting_english" :imageSrc="settingIcon"
         identification="setting_label" />
     </div>
@@ -102,7 +107,7 @@ function toggle_sys_language() {
     <div v-if="!isExpand && isDesktop" class="inner_sidebar_container">
       <img class="button_border" :src="addIcon" alt="New Chat" />
 
-      <div class="button_theme">
+      <div class="button_theme" @click="$router.push('/chum')">
         <img class="standard_icon_size" :src="group3" alt="My Assistant" />
       </div>
 
@@ -114,7 +119,7 @@ function toggle_sys_language() {
         <img class="standard_icon_size" :src="bookmarkIcon" alt="Saved Chat" />
       </div>
 
-      <div class="button_theme">
+      <div class="button_theme" @click="show_feedback_dialog">
         <img class="standard_icon_size" :src="reviewIcon" alt="Feedback" />
       </div>
 

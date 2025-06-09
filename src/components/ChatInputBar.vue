@@ -1,5 +1,7 @@
 <script setup>
 import axios from "axios";
+import khmerFlagIcon from "../assets/icon/kh_flag.svg";
+import englishFlagIcon from "../assets/icon/us_flag.svg";
 import { defineProps, defineEmits, ref, nextTick, computed } from "vue";
 
 const props = defineProps({
@@ -12,6 +14,7 @@ const type_english = "Bart Bong?";
 const type_khmer = "បាទបង?";
 
 const text = ref("");
+const khmerResponse = ref(true)
 
 const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom"]);
 
@@ -44,15 +47,15 @@ async function fetch_api() {
   try {
     const response = await axios.post(
       "https://server.bartbong.com/v1/chat/completions",
-      props.chatArray // Send chatArray directly as the request body
+      props.chatArray
     );
 
     console.log(response)
 
     emit("set-is-generating-to", false);
-    
+
     if (response.data && response.data.content) {
-      add_new_message(response.data.role, response.data.content); // Use role from response
+      add_new_message(response.data.role, response.data.content);
     } else {
       console.error("Invalid response format:", response.data);
     }
@@ -60,6 +63,10 @@ async function fetch_api() {
     console.error("Error fetching data:", error);
     emit("set-is-generating-to", false);
   }
+}
+
+function toggle_response_language() {
+  khmerResponse.value = !khmerResponse.value;
 }
 </script>
 
@@ -80,8 +87,12 @@ async function fetch_api() {
         <div class="button_border" style="padding: 5px">
           <img src="../assets/icon/auto_fix.svg" />
         </div>
+        <div class="button_border" style="padding: 5px" @click="toggle_response_language()">
+          <img style="width: 25px; padding-right: 5px;" :src="khmerResponse ? khmerFlagIcon : englishFlagIcon" />
+          {{ khmerResponse ? "ភាសាខ្មែរ" : "English" }}
+        </div>
       </div>
-      <div class="button_border" style="padding: 5px" @click="send_message(text)"
+      <div class="button_border" style="padding: 5px; justify-content: center;" @click="send_message(text)"
         :class="{ disabled: !isSendButtonEnabled }">
         <img src="../assets/icon/arrow_upward.svg" />
       </div>
@@ -95,8 +106,8 @@ export default {
     adjustHeight() {
       const textarea = this.$refs.textarea;
       if (textarea) {
-        textarea.style.height = "auto"; // Reset height
-        textarea.style.height = `${textarea.scrollHeight}px`; // Set to scroll height
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
       }
     },
   },

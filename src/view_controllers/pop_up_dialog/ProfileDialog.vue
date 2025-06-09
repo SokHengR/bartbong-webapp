@@ -65,7 +65,7 @@ function closeAlert() {
     border: 1px solid #383838;
     border-radius: 10px;
     width: 100%;
-    max-width: 600px;
+    max-width: 350px;
     margin: 20px;
     color: white;
     box-sizing: border-box;
@@ -101,6 +101,7 @@ function closeAlert() {
     padding: 5px;
     border-radius: 10px;
     width: 100%;
+    height: 200px;
     box-sizing: border-box;
 }
 

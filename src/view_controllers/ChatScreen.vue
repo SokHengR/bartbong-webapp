@@ -6,6 +6,7 @@ import { useRouter } from "vue-router";
 import ReviewDialog from "./pop_up_dialog/DevelopmentDialog.vue";
 import ProfileDialog from "./pop_up_dialog/ProfileDialog.vue";
 import DevelopmentDialog from "./pop_up_dialog/DevelopmentDialog.vue";
+import FeedbackDialog from "./pop_up_dialog/FeedbackDialog.vue";
 
 const router = useRouter();
 
@@ -16,21 +17,16 @@ const isGenerating = ref(true);
 const isSignedIn = ref(false);
 const acceptDevelopmentWarning = ref(false);
 const showProfileDialog = ref(false);
+const showFeedbackDialog = ref(false);
 
 onMounted(() => {
   const isKhmerLang = localStorage.getItem("is_khmer");
   if (isKhmerLang !== null) {
-    isKhmer.value = isKhmerLang === "false";
+    isKhmer.value = isKhmerLang === "true";
   }
   const alreadySignedIn = localStorage.getItem("is_signed_in");
   if (alreadySignedIn !== null) {
     isSignedIn.value = alreadySignedIn === "true";
-  }
-});
-
-watchEffect(() => {
-  if (isSignedIn.value === false) {
-    router.push("/login");
   }
 });
 
@@ -60,48 +56,32 @@ function toggleLanguage() {
   isKhmer.value = !isKhmer.value;
   localStorage.setItem("is_khmer", isKhmer.value ? "true" : "false");
 }
+
+function closeFeedbackDialog() {
+  showFeedbackDialog.value = false;
+}
+
+function showFeedbackDialogAlert() {
+  showFeedbackDialog.value = true;
+}
 </script>
 
 <template>
-  <ProfileDialog
-    v-if="showProfileDialog"
-    @close_profile_dialog="setProfileDialog"
-  />
-  <DevelopmentDialog
-    v-if="!acceptDevelopmentWarning"
-    @close_notice_dialog="closeNoticeDialog"
-  />
+  <ProfileDialog v-if="showProfileDialog" @close_profile_dialog="setProfileDialog" />
+  <DevelopmentDialog v-if="!acceptDevelopmentWarning" @close_notice_dialog="closeNoticeDialog" />
+  <FeedbackDialog v-if="showFeedbackDialog" @close_feedback_dialog="closeFeedbackDialog" :isKhmer="isKhmer" />
   <div class="split_view_container">
-    <ChatView
-      :isExpand="isExpand"
-      :isKhmer="isKhmer"
-      :isGenerating="isGenerating"
-      :isSignedIn="isSignedIn"
-      :chatArray="chatArray"
-      @toggle-expand="toggleExpand"
-      @set-is-generating-to="setIsGeneratingTo"
-      @showProfileDialog="setProfileDialog"
-    />
-    <SideBar
-      :isExpand="isExpand"
-      :isKhmer="isKhmer"
-      :isDesktop="true"
-      :chatList="chatArray"
-      @toggle-expand="toggleExpand"
-      @clear-all-chat="clearAllChat"
-      @toggle-language="toggleLanguage"
-    />
+    <ChatView :isExpand="isExpand" :isKhmer="isKhmer" :isGenerating="isGenerating" :isSignedIn="isSignedIn"
+      :chatArray="chatArray" @toggle-expand="toggleExpand" @set-is-generating-to="setIsGeneratingTo"
+      @showProfileDialog="setProfileDialog" />
+    <SideBar :isExpand="isExpand" :isKhmer="isKhmer" :isDesktop="true" :showFeedback="showFeedbackDialog"
+      :chatList="chatArray" @toggle-expand="toggleExpand" @clear-all-chat="clearAllChat"
+      @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" />
   </div>
   <div v-if="isExpand" class="overlay_sidebar">
-    <SideBar
-      :isExpand="isExpand"
-      :isKhmer="isKhmer"
-      :isDesktop="false"
-      :chatList="chatArray"
-      @toggle-expand="toggleExpand"
-      @clear-all-chat="clearAllChat"
-      @toggle-language="toggleLanguage"
-    />
+    <SideBar :isExpand="isExpand" :isKhmer="isKhmer" :isDesktop="false" :showFeedback="showFeedbackDialog"
+      :chatList="chatArray" @toggle-expand="toggleExpand" @clear-all-chat="clearAllChat"
+      @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" />
     <div class="decoy_sidebar" @click="toggleExpand"></div>
   </div>
 </template>

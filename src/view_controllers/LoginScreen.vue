@@ -1,34 +1,38 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import usFlag from "../assets/icon/us_flag.svg";
 import khFlag from "../assets/icon/kh_flag.svg";
+import CustomAlertDialog from "../view_controllers/pop_up_dialog/CustomAlertDialog.vue";
+
 import {
   signInWithRedirect,
   getRedirectResult,
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
-  setPersistence, // Import setPersistence
-  browserLocalPersistence // Import persistence type
+  setPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { auth } from "../firebase";
 
 const isKhmer = ref(false);
 const emailInput = ref("");
 const passwordInput = ref("");
+const showCustomDialog = ref(false);
+
+const titleLabel = ref("");
+const messageLabel = ref("");
+const buttonLabel = ref("Okay");
+
+const router = useRouter();
 
 onMounted(async () => {
   const isKhmerLang = localStorage.getItem("is_khmer");
   if (isKhmerLang !== null) {
     isKhmer.value = isKhmerLang === "true";
   }
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      console.log("Authenticated User:", user);
-    } else {
-      console.log("No user signed in");
-    }
-  });
+
   try {
     const result = await getRedirectResult(auth);
     if (result) {
@@ -36,6 +40,15 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error("Error getting redirect result:", error);
+    titleLabel.value = "Login Error";
+    let userMessage = error.message;
+    if (error.code === "auth/popup-closed-by-user") {
+      userMessage = "Google login popup was closed.";
+    } else if (error.code === "auth/cancelled-popup-request") {
+      userMessage = "Google login popup was already open.";
+    }
+    messageLabel.value = userMessage;
+    showCustomDialog.value = true;
   }
 });
 
@@ -65,21 +78,36 @@ function toggleLanguage() {
 async function loginWithGoogle() {
   const provider = new GoogleAuthProvider();
   try {
-    await setPersistence(auth, browserLocalPersistence); // Set persistence before redirect
+    await setPersistence(auth, browserLocalPersistence);
     signInWithRedirect(auth, provider);
   } catch (error) {
-    console.error("Error setting persistence or signing in with Google:", error);
+    console.error(
+      "Error setting persistence or signing in with Google:",
+      error
+    );
+    titleLabel.value = "Google Login Failed";
+    let userMessage = error.message;
+    if (error.code === "auth/popup-closed-by-user") {
+      userMessage = "Google login popup was closed.";
+    } else if (error.code === "auth/cancelled-popup-request") {
+      userMessage = "Google login popup was already open.";
+    }
+    messageLabel.value = userMessage;
+    showCustomDialog.value = true;
   }
 }
 
 async function loginWithEmail() {
   if (!emailInput.value || !passwordInput.value) {
     console.warn("Email and password are required.");
+    titleLabel.value = "Input Error";
+    messageLabel.value = "Please enter both email and password.";
+    showCustomDialog.value = true;
     return;
   }
 
   try {
-    await setPersistence(auth, browserLocalPersistence); // Set persistence before signing in
+    await setPersistence(auth, browserLocalPersistence);
     const userCredential = await signInWithEmailAndPassword(
       auth,
       emailInput.value,
@@ -87,26 +115,41 @@ async function loginWithEmail() {
     );
     const user = userCredential.user;
     console.log("Email Login Successful:", user);
+
+    localStorage.setItem("is_signed_in", "true");
+    router.push("/");
   } catch (error) {
     console.error("Email Login Error:", error);
+    titleLabel.value = "Login Failed";
+    let userMessage = error.message;
+    if (
+      error.code === "auth/invalid-credential" ||
+      error.code === "auth/user-not-found"
+    ) {
+      userMessage = "Incorrect email or password.\nPlease try again.";
+    } else if (error.code === "auth/wrong-password") {
+      userMessage = "Incorrect password.\nPlease try again.";
+    } else if (error.code === "auth/too-many-requests") {
+      userMessage = "Too many login attempts.\nPlease try again later.";
+    }
+    messageLabel.value = userMessage;
+    showCustomDialog.value = true;
   }
+}
+
+function closeCustomDialog() {
+  showCustomDialog.value = false;
 }
 </script>
 
 <template>
   <div class="float_logo_top">
-    <img
-      style="width: 50px; height: 50px; object-fit: cover"
-      src="../assets/bart_bong_short.png"
-    />
+    <img style="width: 50px; height: 50px; object-fit: cover" src="../assets/bart_bong_short.png" />
   </div>
 
   <div class="horizontal_container cover_background_container">
     <div class="the_cover">
-      <img
-        class="cover_image_background"
-        src="../assets/login_flower_wallpaper.jpg"
-      />
+      <img class="cover_image_background" src="../assets/login_flower_wallpaper.jpg" />
       <img class="water_logo_bottom" src="../assets/bart_bong_short.png" />
     </div>
 
@@ -119,20 +162,10 @@ async function loginWithEmail() {
       }}</label>
 
       <form @submit.prevent="loginWithEmail" style="width: 100%">
-        <input
-          class="custom_input_style margin_top_ten"
-          v-model="emailInput"
-          type="tel"
-          :placeholder="isKhmer ? phoneNumberKhmer : phoneNumberEnglish"
-          autocomplete="tel"
-        />
-        <input
-          class="custom_input_style margin_top_ten"
-          v-model="passwordInput"
-          type="password"
-          :placeholder="isKhmer ? passwordKhmer : passwordEnglish"
-          autocomplete="current-password"
-        />
+        <input class="custom_input_style margin_top_ten" v-model="emailInput" type="tel"
+          :placeholder="isKhmer ? phoneNumberKhmer : phoneNumberEnglish" autocomplete="tel" />
+        <input class="custom_input_style margin_top_ten" v-model="passwordInput" type="password"
+          :placeholder="isKhmer ? passwordKhmer : passwordEnglish" autocomplete="current-password" />
         <button class="custom_button_style margin_top_ten" type="submit">
           {{ isKhmer ? signinKhmer : signinEnglish }}
         </button>
@@ -142,11 +175,8 @@ async function loginWithEmail() {
         <label style="font-size: 15px">{{
           isKhmer ? noAccountKhmer : noAccountEnglish
         }}</label>
-        <label
-          class="point_over_bold"
-          style="font-size: 15px; color: #1384ff"
-          >{{ isKhmer ? registerKhmer : registerEnglish }}</label
-        >
+        <label class="point_over_bold" style="font-size: 15px; color: #1384ff">{{ isKhmer ? registerKhmer :
+          registerEnglish }}</label>
       </div>
 
       <div class="or_separator">
@@ -159,10 +189,7 @@ async function loginWithEmail() {
         <img class="logo_icon_size" src="../assets/icon/apple_logo_white.svg" />
         <label>Apple</label>
       </div>
-      <div
-        class="custom_button_no_color point_over margin_top_ten"
-        @click="loginWithGoogle()"
-      >
+      <div class="custom_button_no_color point_over margin_top_ten" @click="loginWithGoogle()">
         <img class="logo_icon_size" src="../assets/icon/google_logo.svg" />
         <label>Google</label>
       </div>
@@ -175,13 +202,13 @@ async function loginWithEmail() {
 
   <div class="language_button_container">
     <div class="language_button point_over" @click="toggleLanguage()">
-      <img
-        style="width: 25px; object-fit: cover"
-        :src="isKhmer ? khFlag : usFlag"
-      />
+      <img style="width: 25px; object-fit: cover" :src="isKhmer ? khFlag : usFlag" />
       {{ isKhmer ? "ភាសាខ្មែរ" : "English" }}
     </div>
   </div>
+
+  <CustomAlertDialog v-if="showCustomDialog" :titleLabel="titleLabel" :messageLabel="messageLabel"
+    :buttonLabel="buttonLabel" @close_custom_dialog="closeCustomDialog" />
 </template>
 
 <style scoped>
@@ -229,8 +256,8 @@ async function loginWithEmail() {
 }
 
 .cover_image_background {
-  width: 450px;
-  height: 630px;
+  width: 350px;
+  height: 500px;
   border-radius: 20px;
   object-fit: cover;
 }
@@ -336,6 +363,7 @@ async function loginWithEmail() {
   .the_cover {
     display: none;
   }
+
   .login_form_container {
     width: 100%;
   }
