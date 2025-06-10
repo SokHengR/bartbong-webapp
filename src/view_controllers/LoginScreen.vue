@@ -4,6 +4,7 @@ import { useRouter } from "vue-router";
 import usFlag from "../assets/icon/us_flag.svg";
 import khFlag from "../assets/icon/kh_flag.svg";
 import CustomAlertDialog from "../view_controllers/pop_up_dialog/CustomAlertDialog.vue";
+import LoadingIndicator from "../view_controllers/pop_up_dialog/LoadingIndicator.vue";
 
 import {
   signInWithRedirect,
@@ -20,6 +21,7 @@ const isKhmer = ref(false);
 const emailInput = ref("");
 const passwordInput = ref("");
 const showCustomDialog = ref(false);
+const showLoadingDialog = ref(false);
 
 const titleLabel = ref("");
 const messageLabel = ref("");
@@ -106,6 +108,7 @@ async function loginWithEmail() {
     return;
   }
 
+  showLoadingDialog.value = true;
   try {
     await setPersistence(auth, browserLocalPersistence);
     const userCredential = await signInWithEmailAndPassword(
@@ -117,6 +120,7 @@ async function loginWithEmail() {
     console.log("Email Login Successful:", user);
 
     localStorage.setItem("is_signed_in", "true");
+    showLoadingDialog.value = false;
     router.push("/");
   } catch (error) {
     console.error("Email Login Error:", error);
@@ -134,6 +138,7 @@ async function loginWithEmail() {
     }
     messageLabel.value = userMessage;
     showCustomDialog.value = true;
+    showLoadingDialog.value = false;
   }
 }
 
@@ -156,10 +161,10 @@ function closeCustomDialog() {
     <div class="vertical_container login_form_container" style="gap: 0px">
       <label style="font-size: 30px; font-weight: bold">{{
         isKhmer ? signinKhmer : signinEnglish
-      }}</label>
+        }}</label>
       <label style="font-size: 15px">{{
         isKhmer ? toContinueKhmer : toContinueEnglish
-      }}</label>
+        }}</label>
 
       <form @submit.prevent="loginWithEmail" style="width: 100%">
         <input class="custom_input_style margin_top_ten" v-model="emailInput" type="tel"
@@ -174,7 +179,7 @@ function closeCustomDialog() {
       <div class="horizontal_container margin_top_ten">
         <label style="font-size: 15px">{{
           isKhmer ? noAccountKhmer : noAccountEnglish
-        }}</label>
+          }}</label>
         <label class="point_over_bold" style="font-size: 15px; color: #1384ff">{{ isKhmer ? registerKhmer :
           registerEnglish }}</label>
       </div>
@@ -209,6 +214,8 @@ function closeCustomDialog() {
 
   <CustomAlertDialog v-if="showCustomDialog" :titleLabel="titleLabel" :messageLabel="messageLabel"
     :buttonLabel="buttonLabel" @close_custom_dialog="closeCustomDialog" />
+  <LoadingIndicator v-if="showLoadingDialog" :isKhmer="isKhmer" />
+
 </template>
 
 <style scoped>

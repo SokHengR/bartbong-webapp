@@ -7,7 +7,6 @@ import bart_bong_short from "/src/assets/bart_bong_short.png";
 import addIcon from "/src/assets/icon/add.svg";
 import group3 from "/src/assets/icon/group3.svg";
 import folderIcon from "/src/assets/icon/folder.svg";
-import bookmarkIcon from "/src/assets/icon/bookmark.svg";
 import reviewIcon from "/src/assets/icon/review.svg";
 import settingIcon from "/src/assets/icon/setting.svg";
 import deleteIcon from "/src/assets/icon/delete.svg";
@@ -40,9 +39,6 @@ const assistant_khmer = "ជំនួយការរបស់បង";
 
 const file_english = "My File";
 const file_khmer = "ឯកសាររបស់បង";
-
-const save_english = "Saved Chat";
-const save_khmer = "ពិភាក្សាដែលបានរក្សាទុក";
 
 const feedback_english = "Feedback";
 const feedback_khmer = "ផ្តល់មតិកែលម្អ";
@@ -96,8 +92,6 @@ function show_feedback_dialog() {
         identification="standard_icon_size" @click="$router.push('/chum')"/>
       <ThemeButton :buttonText="props.isKhmer ? file_khmer : file_english" :imageSrc="folderIcon"
         identification="standard_icon_size" />
-      <ThemeButton :buttonText="props.isKhmer ? save_khmer : save_english" :imageSrc="bookmarkIcon"
-        identification="standard_icon_size" />
       <ThemeButton :buttonText="props.isKhmer ? feedback_khmer : feedback_english" :imageSrc="reviewIcon"
         identification="feedback_label" @click="show_feedback_dialog()" />
       <ThemeButton :buttonText="props.isKhmer ? setting_khmer : setting_english" :imageSrc="settingIcon"
@@ -113,10 +107,6 @@ function show_feedback_dialog() {
 
       <div class="button_theme">
         <img class="standard_icon_size" :src="folderIcon" alt="My File" />
-      </div>
-
-      <div class="button_theme">
-        <img class="standard_icon_size" :src="bookmarkIcon" alt="Saved Chat" />
       </div>
 
       <div class="button_theme" @click="show_feedback_dialog">

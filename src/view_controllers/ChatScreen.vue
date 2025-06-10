@@ -3,10 +3,11 @@ import { ref, onMounted, watchEffect } from "vue";
 import ChatView from "../components/ChatView.vue";
 import SideBar from "../components/SideBar.vue";
 import { useRouter } from "vue-router";
-import ReviewDialog from "./pop_up_dialog/DevelopmentDialog.vue";
+// import ReviewDialog from "./pop_up_dialog/DevelopmentDialog.vue";
 import ProfileDialog from "./pop_up_dialog/ProfileDialog.vue";
 import DevelopmentDialog from "./pop_up_dialog/DevelopmentDialog.vue";
 import FeedbackDialog from "./pop_up_dialog/FeedbackDialog.vue";
+import ConfirmAlertDialog from "./pop_up_dialog/ConfirmAlertDialog.vue";
 
 const router = useRouter();
 
@@ -18,6 +19,15 @@ const isSignedIn = ref(false);
 const acceptDevelopmentWarning = ref(false);
 const showProfileDialog = ref(false);
 const showFeedbackDialog = ref(false);
+const showConfirmAlertDialog = ref(false)
+
+const title_confirmDialog = ref("")
+const message_confirmDialog = ref("")
+
+const titleConfirm_kh = "តើបងប្រាកដទេ?";
+const titleConfirm_en = "Are you sure?";
+const messageConfirm_kh = "ការសន្ទនារបស់បងទាំងអស់នឹងត្រូវបានលុបចោល";
+const messageConfirm_en = "All your chat history will be deleted";
 
 onMounted(() => {
   const isKhmerLang = localStorage.getItem("is_khmer");
@@ -64,23 +74,40 @@ function closeFeedbackDialog() {
 function showFeedbackDialogAlert() {
   showFeedbackDialog.value = true;
 }
+
+function closeConfirmDialog() {
+  showConfirmAlertDialog.value = false;
+}
+
+function acceptConfirmDialog() {
+  clearAllChat();
+  closeConfirmDialog();
+}
+
+function openConfirmDialog() {
+  title_confirmDialog.value = isKhmer.value ? titleConfirm_kh : titleConfirm_en;
+  message_confirmDialog.value = isKhmer.value ? messageConfirm_kh : messageConfirm_en;
+  showConfirmAlertDialog.value = true;
+}
 </script>
 
 <template>
-  <ProfileDialog v-if="showProfileDialog" @close_profile_dialog="setProfileDialog" />
+  <ProfileDialog v-if="showProfileDialog" :titleLabel="title_confirmDialog" @close_profile_dialog="setProfileDialog" />
   <DevelopmentDialog v-if="!acceptDevelopmentWarning" @close_notice_dialog="closeNoticeDialog" />
   <FeedbackDialog v-if="showFeedbackDialog" @close_feedback_dialog="closeFeedbackDialog" :isKhmer="isKhmer" />
+  <ConfirmAlertDialog v-if="showConfirmAlertDialog" :titleLabel="title_confirmDialog" :messageLabel="message_confirmDialog" @cancel_confirm_dialog="closeConfirmDialog"
+    @accept_confirm_dialog="acceptConfirmDialog" />
   <div class="split_view_container">
     <ChatView :isExpand="isExpand" :isKhmer="isKhmer" :isGenerating="isGenerating" :isSignedIn="isSignedIn"
       :chatArray="chatArray" @toggle-expand="toggleExpand" @set-is-generating-to="setIsGeneratingTo"
       @showProfileDialog="setProfileDialog" />
     <SideBar :isExpand="isExpand" :isKhmer="isKhmer" :isDesktop="true" :showFeedback="showFeedbackDialog"
-      :chatList="chatArray" @toggle-expand="toggleExpand" @clear-all-chat="clearAllChat"
+      :chatList="chatArray" @toggle-expand="toggleExpand" @clear-all-chat="openConfirmDialog"
       @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" />
   </div>
   <div v-if="isExpand" class="overlay_sidebar">
     <SideBar :isExpand="isExpand" :isKhmer="isKhmer" :isDesktop="false" :showFeedback="showFeedbackDialog"
-      :chatList="chatArray" @toggle-expand="toggleExpand" @clear-all-chat="clearAllChat"
+      :chatList="chatArray" @toggle-expand="toggleExpand" @clear-all-chat="openConfirmDialog"
       @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" />
     <div class="decoy_sidebar" @click="toggleExpand"></div>
   </div>

@@ -46,7 +46,7 @@ function closeAlert() {
 
 <style scoped>
 .first_index {
-  z-index: 1;
+  z-index: 2;
 }
 
 .scoped_hstack {
@@ -55,7 +55,6 @@ function closeAlert() {
 
 .scoped_button_size {
   width: 100%;
-  padding: 5px;
   font-family: 'Noto Sans Khmer', sans-serif;
 }
 
