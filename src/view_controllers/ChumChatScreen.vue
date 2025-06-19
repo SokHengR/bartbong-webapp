@@ -3,7 +3,7 @@ import { ref, onMounted, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import backIcon from "/src/assets/icon/back_arrow.svg";
 import addIcon from "/src/assets/icon/add_circle.svg";
-import groupChatIcon from "/src/assets/icon/group_chat.svg"
+import groupChatIcon from "/src/assets/icon/group_chat.svg";
 import group3Icon from "/src/assets/icon/group3.svg";
 import settingIcon from "/src/assets/icon/setting.svg";
 import accountIcon from "/src/assets/icon/account_circle.svg";
@@ -16,6 +16,11 @@ import ChatProfileCell from "../components/ChatCellView/ChatProfileCell.vue";
 
 const isKhmer = ref(false);
 const chatInput = ref(null);
+const hasInput = ref(false);
+
+const isViewDetail = ref(false);
+
+const tabIndex = ref(1);
 
 const chat_title_kh = "ជជែកកំសាន្ត";
 const chat_title_en = "Chat";
@@ -42,61 +47,77 @@ function adjustHeight() {
         if (textarea) {
             textarea.style.height = "22px";
             textarea.style.height = `${textarea.scrollHeight}px`;
+            hasInput.value = textarea.value.length > 0;
         }
     });
+}
+
+function showChatDetail() {
+    isViewDetail.value = true;
+}
+
+function closeChatDetail() {
+    isViewDetail.value = false;
+}
+
+function selectTab(index) {
+    tabIndex.value = index;
 }
 </script>
 
 <template>
     <div class="main_screen">
-        <div class="conversation_list_container">
+        <div :class="['conversation_list_container', { 'hide_mobile': isViewDetail }]">
             <div class="scoped_title_bar">
                 <img :src="backIcon" class="icon_button" @click="goBack">
                 <label style="width: 100%; text-align: center; color: white;">
                     {{ isKhmer ? chat_title_kh : chat_title_en }}
                 </label>
-                <img :src="addIcon" class="icon_button">
+                <div style="width: 30px; height: 20px;"></div>
             </div>
 
             <div class="chat_list_view">
-                <ChatProfileCell />
+                <ChatProfileCell :isSelected="false" @profile-clicked="showChatDetail" />
+                <ChatProfileCell :isSelected="true" @profile-clicked="showChatDetail" />
             </div>
 
             <div class="scoped_tab_bar">
-                <div class="icon_button scoped_icon_button">
+                <div :class="tabIndex == 1 ? 'selected_button_scoped' : 'scoped_icon_button'" @click="selectTab(1)">
                     <img :src="groupChatIcon">
                 </div>
-                <div class="icon_button scoped_icon_button">
+                <div :class="tabIndex == 2 ? 'selected_button_scoped' : 'scoped_icon_button'" @click="selectTab(2)">
                     <img :src="group3Icon">
                 </div>
-                <div class="icon_button scoped_icon_button">
+                <div :class="tabIndex == 3 ? 'selected_button_scoped' : 'scoped_icon_button'" @click="selectTab(3)">
                     <img :src="accountIcon">
                 </div>
-                <div class="icon_button scoped_icon_button">
+                <div :class="tabIndex == 4 ? 'selected_button_scoped' : 'scoped_icon_button'" @click="selectTab(4)">
                     <img :src="settingIcon">
                 </div>
             </div>
         </div>
 
-        <div class="chat_detail_container">
+        <div :class="['chat_detail_container', { 'hide_mobile': !isViewDetail }]">
             <div class="scoped_title_bar">
+                <img :src="backIcon" class="icon_button show_on_mobile" @click="closeChatDetail">
                 <label style="width: 100%; text-align: center; color: white;">
                     San Nimith
                 </label>
+                <div style="width: 30px; height: 20px;" class="show_on_mobile"></div>
             </div>
 
             <div class="chat_list_view">
-                <ChatTextCell senderType="assistant" contentText="Hello! How can I help you?" :showProfile="true"/>
+                <ChatTextCell senderType="assistant" contentText="Hello! How can I help you?" :showProfile="true" />
                 <ChatTextCell senderType="user" contentText="Hi! I'd like to learn more about your services."
-                    :showProfile="true"/>
+                    :showProfile="true" />
             </div>
 
-            <div class="scoped_tab_bar">
+            <div class="scoped_tab_bar input_container">
                 <textarea ref="chatInput" class="custom_text_area_scoped" @input="adjustHeight"
                     :placeholder="isKhmer ? type_here_kh : type_here_en"></textarea>
                 <img :src="fileIcon" class="icon_button add_padding">
                 <img :src="smileIcon" class="icon_button add_padding">
-                <img :src="sentIcon" class="icon_button add_padding">
+                <img v-if="hasInput" :src="sentIcon" class="icon_button add_padding">
             </div>
         </div>
 
@@ -104,6 +125,20 @@ function adjustHeight() {
 </template>
 
 <style scoped>
+@keyframes show_side_bar_anim {
+    0% {
+        width: 0px;
+    }
+
+    100% {
+        width: 350px;
+    }
+}
+
+.show_on_mobile {
+    display: none;
+}
+
 .main_screen {
     position: absolute;
     top: 0;
@@ -123,7 +158,7 @@ function adjustHeight() {
     color: white;
     border: none;
     outline: none;
-    overflow-y: hidden;
+    overflow-y: scroll;
     font-size: 15px;
     max-height: 200px;
     line-height: 1.4;
@@ -150,6 +185,7 @@ function adjustHeight() {
     width: 350px;
     height: 100%;
     border-right: 1px solid #383838;
+    animation: show_side_bar_anim 0.3s;
 }
 
 .scoped_icon_button {
@@ -159,6 +195,23 @@ function adjustHeight() {
     justify-content: center;
     width: 50px;
     padding: 5px;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.scoped_icon_button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.selected_button_scoped {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    padding: 5px;
+    background-color: #007AFF;
+    border-radius: 10px;
 }
 
 .scoped_title_bar {
@@ -178,7 +231,7 @@ function adjustHeight() {
 .scoped_tab_bar {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
     box-sizing: border-box;
@@ -187,7 +240,10 @@ function adjustHeight() {
     background-color: rgba(0, 0, 0, 0.2);
     padding: 10px;
     border-top: 1px solid #383838;
-    gap: 10px;
+}
+
+.input_container {
+    align-items: end;
 }
 
 .chat_detail_container {
@@ -196,5 +252,20 @@ function adjustHeight() {
     height: 100%;
     width: 100%;
     box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+    .hide_mobile {
+        display: none;
+    }
+
+    .conversation_list_container {
+        width: 100%;
+        animation: none;
+    }
+
+    .show_on_mobile {
+        display: flex;
+    }
 }
 </style>

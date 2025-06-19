@@ -26,8 +26,8 @@ const emit = defineEmits(["close_notice_dialog"]);
 const title_khmer = "សូមបងជ្រាបថា";
 const title_english = "Please be aware that";
 
-const message_khmer = "AI របស់ពួកយើង កំពុងស្ថិតក្នុងដំណាក់កាលអភិវឌ្ឍន៍ ដូច្នេះរាស់ការឆ្លើយតប អាចនឹងផ្តល់នូវព័ត៌មានមិនត្រឹមត្រូវ ឬមិនសមរម្យ។";
-const message_english = "Our AI model is in its developmental phase. It is possible that the provided responses may not always be accurate or appropriate.";
+const message_khmer = "AI របស់ពួកយើងកំពុងស្ថិតក្នុងដំណាក់កាលអភិវឌ្ឍន៍ ដូច្នេះរាស់ការឆ្លើយតប អាចនឹងផ្តល់នូវព័ត៌មានមិនត្រឹមត្រូវ មិនពាក់ព័ន្ធ ឬមិនសមរម្យ។";
+const message_english = "Our AI model is still in development phase. Therefore responses might be inaccurate, irrelevant or inappropriate.";
 
 // const message_khmer = "ការសន្ទនារបស់បងនឹងត្រូវបានត្រួតពិនិតយសម្រាប់គោលបំណងបណ្តុះបណ្តាល នឹងកែឆ្នៃ AI របស់យើង, ដូច្នេះ សូមបងជៀសវាងក្នុងការចែករំលែកទិន្នន័យដែលមិនគួរចែករំលែក";
 // const message_english = "Your conversations will be reviewed by our specialists for training purposes to improve our AI accuracy. As such, please avoid sharing sensitive information.";

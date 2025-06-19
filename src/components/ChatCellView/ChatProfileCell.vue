@@ -1,9 +1,21 @@
 <script setup>
+import profileImage from "/src/assets/bart_bong_logo.jpg"
+import { defineProps, defineEmits } from 'vue';
+
+const props = defineProps({
+    isSelected: Boolean
+})
+
+const emit = defineEmits(['profile-clicked'])
+
+const emitClick = () => {
+  emit('profile-clicked');
+}
 </script>
 
 <template>
-    <div class="cell_container">
-        <img src="" class="profile_image" />
+    <div :class="['cell_container', { 'is_selected_scoped': props.isSelected }]" @click="emitClick">
+        <img :src="profileImage" class="profile_image" />
         <div class="scoped_text_container">
             <div class="name_label">
                 Michael Jackson
@@ -28,6 +40,15 @@
     gap: 10px;
     border-bottom: 1px solid #383838;
     box-sizing: border-box;
+    cursor: pointer;
+}
+
+.cell_container:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.is_selected_scoped {
+    background-color: rgba(0, 150, 255, 0.1);
 }
 
 .scoped_text_container {

@@ -81,7 +81,7 @@ async function loginWithGoogle() {
   const provider = new GoogleAuthProvider();
   try {
     await setPersistence(auth, browserLocalPersistence);
-    signInWithRedirect(auth, provider);
+    await signInWithRedirect(auth, provider);
   } catch (error) {
     console.error(
       "Error setting persistence or signing in with Google:",

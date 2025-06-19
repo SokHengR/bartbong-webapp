@@ -32,8 +32,8 @@ const cancel_kh = "បោះបង់";
 const feedback_en = "Send Feedback";
 const feedback_kh = "ផ្ញើមតិកែលម្អ";
 
-const message_en = "Please give us your thoughts on what we can do to improve.";
-const message_kh = "សូមបងសរសេរនូវគំនិតយោបល់របស់បង តើយើងអាចធ្វើអ្វីបានដើម្បីកែលម្អ?";
+const message_en = "You have any ideas for new features or feedback? Tell us!";
+const message_kh = "បងមានគំនិតសម្រាប់មុខងារថ្មី ឬមតិកែលម្អមែនទេ? ប្រាប់ប្អូនបាន!";
 
 const title_en = "Give Feedback";
 const title_kh = "ផ្តល់គំនិតយោបល់កែលម្អ";
