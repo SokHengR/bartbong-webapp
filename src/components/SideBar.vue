@@ -6,7 +6,7 @@ import bart_bong_long from "/src/assets/bart_bong_long.png";
 import bart_bong_short from "/src/assets/bart_bong_short.png";
 import addIcon from "/src/assets/icon/add.svg";
 import group3 from "/src/assets/icon/group3.svg";
-import folderIcon from "/src/assets/icon/folder.svg";
+import folderIcon from "/src/assets/icon/school.svg";
 import reviewIcon from "/src/assets/icon/review.svg";
 import settingIcon from "/src/assets/icon/setting.svg";
 import deleteIcon from "/src/assets/icon/delete.svg";
@@ -37,8 +37,8 @@ const new_chat_khmer = "បង្កើតការពិភាក្សាថ�
 const assistant_english = "My Companion";
 const assistant_khmer = "ជំនួយការរបស់បង";
 
-const file_english = "My File";
-const file_khmer = "ឯកសាររបស់បង";
+const file_english = "Learn";
+const file_khmer = "រៀនប្រើ";
 
 const feedback_english = "Feedback";
 const feedback_khmer = "ផ្តល់មតិកែលម្អ";

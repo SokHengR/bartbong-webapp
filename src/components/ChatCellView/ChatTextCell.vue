@@ -9,6 +9,8 @@
 <script setup>
 import { ref, computed, onMounted, onUpdated, defineProps } from 'vue'
 import { marked } from 'marked'
+import markedKatex from 'marked-katex-extension'
+import 'katex/dist/katex.min.css'
 import hljs from 'highlight.js'
 import DOMPurify from 'dompurify'
 
@@ -29,7 +31,11 @@ marked.setOptions({
     breaks: true
 })
 
-// Process markdown content
+marked.use(markedKatex({
+    throwOnError: false,
+    output: 'html'
+}))
+
 const processedContent = computed(() => {
     const rawHtml = marked(props.contentText || '')
     return DOMPurify.sanitize(rawHtml)
@@ -71,6 +77,10 @@ onMounted(processCodeBlocks)
 onUpdated(processCodeBlocks)
 </script>
 
+<style>
+@import "katex/dist/katex.min.css";
+</style>
+
 <style scoped>
 @keyframes expandHeight {
     from {
@@ -91,7 +101,7 @@ onUpdated(processCodeBlocks)
 }
 
 .content-bubble {
-    color: white;
+color: white;
     max-width: 92%;
     overflow: hidden;
     padding: 12px 16px;
@@ -169,6 +179,10 @@ onUpdated(processCodeBlocks)
 ::v-deep(.copy-button:hover) {
     border: 1px solid orange;
     border-radius: 5px;;
+}
+
+:deep(.katex-display>.katex) {
+    text-align: left;
 }
 
 .copy-button:hover {
