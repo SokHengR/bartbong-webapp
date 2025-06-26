@@ -124,7 +124,6 @@ onUpdated(processCodeBlocks)
 }
 
 .markdown-content :deep(pre) {
-    position: relative;
     background: rgb(55, 55, 55);
     border: 1px solid #9d9d9d;
     border-radius: 8px;
