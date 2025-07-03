@@ -9,7 +9,6 @@ import LoadingIndicator from "../view_controllers/pop_up_dialog/LoadingIndicator
 import {
   signInWithRedirect,
   getRedirectResult,
-  onAuthStateChanged,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   setPersistence,
@@ -148,9 +147,9 @@ function closeCustomDialog() {
 </script>
 
 <template>
-  <div class="float_logo_top">
+  <a class="float_logo_top" href="/home">
     <img style="width: 50px; height: 50px; object-fit: cover" src="../assets/bart_bong_short.png" />
-  </div>
+  </a>
 
   <div class="horizontal_container cover_background_container">
     <div class="the_cover">
@@ -161,10 +160,10 @@ function closeCustomDialog() {
     <div class="vertical_container login_form_container" style="gap: 0px">
       <label style="font-size: 30px; font-weight: bold">{{
         isKhmer ? signinKhmer : signinEnglish
-        }}</label>
+      }}</label>
       <label style="font-size: 15px">{{
         isKhmer ? toContinueKhmer : toContinueEnglish
-        }}</label>
+      }}</label>
 
       <form @submit.prevent="loginWithEmail" style="width: 100%">
         <input class="custom_input_style margin_top_ten" v-model="emailInput" type="tel"
@@ -179,7 +178,7 @@ function closeCustomDialog() {
       <div class="horizontal_container margin_top_ten">
         <label style="font-size: 15px">{{
           isKhmer ? noAccountKhmer : noAccountEnglish
-          }}</label>
+        }}</label>
         <label class="point_over_bold" style="font-size: 15px; color: #1384ff">{{ isKhmer ? registerKhmer :
           registerEnglish }}</label>
       </div>
@@ -219,6 +218,16 @@ function closeCustomDialog() {
 </template>
 
 <style scoped>
+@keyframes showCoverImageAnim {
+  from {
+    width: 0px;
+  }
+
+  to {
+    width: 350px;
+  }
+}
+
 .line {
   flex-grow: 1;
   height: 1px;
@@ -267,6 +276,7 @@ function closeCustomDialog() {
   height: 500px;
   border-radius: 20px;
   object-fit: cover;
+  animation: showCoverImageAnim 3s;
 }
 
 .login_form_container {

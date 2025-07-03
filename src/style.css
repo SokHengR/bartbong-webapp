@@ -9,6 +9,11 @@ body {
   font-family: 'Noto Sans Khmer', sans-serif;
 }
 
+div,
+input {
+  font-family: 'Noto Sans Khmer', sans-serif;
+}
+
 .standard_icon_size {
   width: 20px;
   height: 20px;
@@ -50,7 +55,6 @@ body {
 }
 
 .button_border {
-  font-family: 'Noto Sans Khmer', sans-serif;
   border-radius: 10px;
   padding: 7px;
   color: white;
@@ -61,6 +65,8 @@ body {
   border: 1px solid #383838;
   background-color: rgba(255, 255, 255, 0.03);
   flex-direction: row;
+  backdrop-filter: blur(10px);
+  gap: 5px;
 }
 
 .button_border:hover {
@@ -78,6 +84,8 @@ body {
   border: 1px solid rgba(255, 0, 0, 0.3);
   background-color: rgba(255, 0, 0, 0.1);
   flex-direction: row;
+  backdrop-filter: blur(10px);
+  gap: 5px;
 }
 
 .danger_button_border:hover {
@@ -95,6 +103,8 @@ body {
   border: 1px solid rgba(255, 150, 0, 0.3);
   background-color: rgba(255, 150, 0, 0.1);
   flex-direction: row;
+  backdrop-filter: blur(10px);
+  gap: 5px;
 }
 
 .warn_button_border:hover {
@@ -112,10 +122,31 @@ body {
   border: 1px solid rgba(0, 255, 0, 0.3);
   background-color: rgba(0, 255, 0, 0.1);
   flex-direction: row;
+  backdrop-filter: blur(10px);
+  gap: 5px;
 }
 
 .safe_button_border:hover {
   background-color: rgba(0, 255, 0, 0.3);
+}
+
+.theme_button_border {
+  border-radius: 10px;
+  padding: 10px;
+  color: #007AFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 122, 255, 0.3);
+  background-color: rgba(0, 122, 255, 0.1);
+  flex-direction: row;
+  backdrop-filter: blur(10px);
+  gap: 5px;
+}
+
+.theme_button_border:hover {
+  background-color: rgba(0, 122, 255, 0.3);
 }
 
 .no_break_line {

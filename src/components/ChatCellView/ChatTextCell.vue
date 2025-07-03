@@ -86,6 +86,7 @@ onUpdated(processCodeBlocks)
     from {
         max-height: 0px;
     }
+
     to {
         max-height: 10000px;
     }
@@ -101,7 +102,7 @@ onUpdated(processCodeBlocks)
 }
 
 .content-bubble {
-color: white;
+    color: white;
     max-width: 92%;
     overflow: hidden;
     padding: 12px 16px;
@@ -176,9 +177,10 @@ color: white;
     color: white;
     cursor: pointer;
 }
+
 ::v-deep(.copy-button:hover) {
     border: 1px solid orange;
-    border-radius: 5px;;
+    border-radius: 5px;
 }
 
 :deep(.katex-display>.katex) {
