@@ -11,8 +11,6 @@ import Term from "../view_controllers/Terms.vue";
 import ChumChat from "../view_controllers/ChumChatScreen.vue";
 import NotFound from "../view_controllers/NotFoundScreen.vue"
 import Registration from "../view_controllers/RegistrationScreen.vue"; // Import RegistrationScreen
-import { auth } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
 
 const routes = [
   { path: "/", component: HomeWrapper },
@@ -26,7 +24,7 @@ const routes = [
   { path: "/product", component: Product },
   { path: "/pricing", component: Pricing },
   { path: "/thank", component: Thank },
-  { path: "/chum", component: ChumChat, meta: { requiresAuth: true } },
+  { path: "/chum", component: ChumChat },
   { path: "/:pathMatch(.*)*", redirect: "/notfound" },
 ];
 
@@ -35,46 +33,8 @@ const router = createRouter({
   routes,
 });
 
-let isFirebaseInitialized = false;
-
-onAuthStateChanged(auth, (user) => {
-  isFirebaseInitialized = true;
-  if (user && router.currentRoute.value.path === "/login") {
-    router.push("/");
-  }
-  if (!user && router.currentRoute.value.meta.requiresAuth) {
-    router.push("/login");
-  }
-});
-
 router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  const isAuthenticated = auth.currentUser;
-
-  if (!isFirebaseInitialized) {
-    onAuthStateChanged(auth, () => {
-      const isAuthenticatedAfterInit = auth.currentUser;
-      if (requiresAuth && !isAuthenticatedAfterInit) {
-        next("/login");
-      } else if (to.path === "/login" && isAuthenticatedAfterInit) {
-        next("/");
-      } else if (to.path === "/register" && isAuthenticatedAfterInit) { // Prevent access to register if logged in
-        next("/");
-      } else {
-        next();
-      }
-    });
-  } else {
-    if (requiresAuth && !isAuthenticated) {
-      next("/login");
-    } else if (to.path === "/login" && isAuthenticated) {
-      next("/");
-    } else if (to.path === "/register" && isAuthenticated) { // Prevent access to register if logged in
-      next("/");
-    } else {
-      next();
-    }
-  }
+  next();
 });
 
 export default router;
