@@ -10,12 +10,14 @@ import Privacy from "../view_controllers/Privacy.vue";
 import Term from "../view_controllers/Terms.vue";
 import ChumChat from "../view_controllers/ChumChatScreen.vue";
 import NotFound from "../view_controllers/NotFoundScreen.vue"
+import Registration from "../view_controllers/RegistrationScreen.vue"; // Import RegistrationScreen
 import { auth } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 const routes = [
   { path: "/", component: HomeWrapper },
   { path: "/login", component: Login },
+  { path: "/register", component: Registration }, // Add the registration route
   { path: "/privacy", component: Privacy },
   { path: "/term", component: Term },
   { path: "/notfound", component: NotFound },
@@ -56,6 +58,8 @@ router.beforeEach((to, from, next) => {
         next("/login");
       } else if (to.path === "/login" && isAuthenticatedAfterInit) {
         next("/");
+      } else if (to.path === "/register" && isAuthenticatedAfterInit) { // Prevent access to register if logged in
+        next("/");
       } else {
         next();
       }
@@ -64,6 +68,8 @@ router.beforeEach((to, from, next) => {
     if (requiresAuth && !isAuthenticated) {
       next("/login");
     } else if (to.path === "/login" && isAuthenticated) {
+      next("/");
+    } else if (to.path === "/register" && isAuthenticated) { // Prevent access to register if logged in
       next("/");
     } else {
       next();
