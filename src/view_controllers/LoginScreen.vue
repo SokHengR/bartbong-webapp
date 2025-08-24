@@ -149,10 +149,15 @@ function goToRegister() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url("/src/assets/cover.svg"); /* Background image */
-  background-size: cover; /* Cover the entire container */
-  background-position: center; /* Center the background image */
   background-color: #000000; /* Fallback black background color */
+}
+
+@media (min-width: 900px) {
+  .login_container {
+    background-image: url("/src/assets/cover.svg"); /* Background image */
+    background-size: cover; /* Cover the entire container */
+    background-position: center; /* Center the background image */
+  }
 }
 
 .login_form_container {

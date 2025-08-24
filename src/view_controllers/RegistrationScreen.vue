@@ -12,8 +12,6 @@ const languageState = proxy.$language;
 const fullNameInput = ref("");
 const dobInput = ref("");
 const nationalityInput = ref("");
-const addressInput = ref("");
-const usernameInput = ref("");
 const emailInput = ref("");
 const passwordInput = ref("");
 const confirmPasswordInput = ref("");
@@ -41,12 +39,6 @@ var dobEnglish = "Date of Birth";
 var nationalityKhmer = "សញ្ជាតិ";
 var nationalityEnglish = "Nationality";
 
-var addressKhmer = "អាសយដ្ឋាន";
-var addressEnglish = "Address";
-
-var usernameKhmer = "ឈ្មោះ​អ្នកប្រើប្រាស់";
-var usernameEnglish = "Username";
-
 var emailKhmer = "អ៊ីមែល";
 var emailEnglish = "Email";
 
@@ -68,9 +60,9 @@ function toggleLanguage() {
 }
 
 async function registerWithEmail() {
-  if (!usernameInput.value || !emailInput.value || !passwordInput.value || !confirmPasswordInput.value) {
+  if (!fullNameInput.value || !emailInput.value || !passwordInput.value || !confirmPasswordInput.value) {
     titleLabel.value = "Input Error";
-    messageLabel.value = "Please fill in all required fields (Username, Email, Password, Confirm Password).";
+    messageLabel.value = "Please fill in all required fields (Full Name, Email, Password, Confirm Password).";
     showCustomDialog.value = true;
     return;
   }
@@ -88,8 +80,8 @@ async function registerWithEmail() {
     const response = await new Promise(resolve => setTimeout(() => {
       // Here you would typically call a backend API to register the user
       // For demonstration, we'll just simulate success after a delay
-      if (emailInput.value === "existing@example.com" || usernameInput.value === "existinguser") {
-        resolve({ success: false, error: "Email or username already registered." });
+      if (emailInput.value === "existing@example.com") {
+        resolve({ success: false, error: "Email already registered." });
       } else {
         resolve({ success: true });
       }
@@ -140,16 +132,12 @@ function goToLogin() {
 
       <form @submit.prevent="registerWithEmail" style="width: 100%">
         <input class="custom_input_style margin_top_ten" v-model="fullNameInput" type="text"
-          :placeholder="languageState.isKhmer ? fullNameKhmer : fullNameEnglish" autocomplete="name" />
+          :placeholder="languageState.isKhmer ? fullNameKhmer : fullNameEnglish" autocomplete="name" required />
         <input class="custom_input_style margin_top_ten" v-model="dobInput" type="date"
           :placeholder="languageState.isKhmer ? dobKhmer : dobEnglish" autocomplete="bday" />
         <input class="custom_input_style margin_top_ten" v-model="nationalityInput" type="text"
           :placeholder="languageState.isKhmer ? nationalityKhmer : nationalityEnglish" />
-        <input class="custom_input_style margin_top_ten" v-model="addressInput" type="text"
-          :placeholder="languageState.isKhmer ? addressKhmer : addressEnglish" autocomplete="street-address" />
         
-        <input class="custom_input_style margin_top_ten" v-model="usernameInput" type="text"
-          :placeholder="languageState.isKhmer ? usernameKhmer : usernameEnglish" autocomplete="username" required />
         <input class="custom_input_style margin_top_ten" v-model="emailInput" type="email"
           :placeholder="languageState.isKhmer ? emailKhmer : emailEnglish" autocomplete="email" required />
         <input class="custom_input_style margin_top_ten" v-model="passwordInput" type="password"
@@ -191,10 +179,15 @@ function goToLogin() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-image: url("/src/assets/cover.svg"); /* Background image */
-  background-size: cover; /* Cover the entire container */
-  background-position: center; /* Center the background image */
   background-color: #000000; /* Fallback black background color */
+}
+
+@media (min-width: 900px) {
+  .registration_container {
+    background-image: url("/src/assets/cover.svg"); /* Background image */
+    background-size: cover; /* Cover the entire container */
+    background-position: center; /* Center the background image */
+  }
 }
 
 .registration_form_container {
@@ -242,6 +235,11 @@ function goToLogin() {
 
 .custom_input_style:focus {
   border-color: #1384ff; /* Highlight border on focus */
+}
+
+/* Style for the date input to change the calendar icon color */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* Invert the color to make it white */
 }
 
 .custom_button_style {

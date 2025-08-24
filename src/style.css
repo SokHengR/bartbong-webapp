@@ -15,12 +15,14 @@ html.khmer-lang body {
 }
 
 div,
-input {
+input,
+button { /* Added button to apply font to buttons */
   font-family: 'Noto Sans', sans-serif;
 }
 
 html.khmer-lang div,
-html.khmer-lang input {
+html.khmer-lang input,
+html.khmer-lang button { /* Added button to apply font to buttons */
   font-family: 'Noto Sans Khmer', 'Noto Sans', sans-serif;
 }
 
