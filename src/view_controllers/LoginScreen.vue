@@ -56,23 +56,29 @@ async function loginWithEmail() {
 
   showLoadingDialog.value = true;
   try {
-    // Simulate API call for login
-    // In a real application, you would replace this with an actual API call
-    const response = await new Promise(resolve => setTimeout(() => {
-      if (emailInput.value === "test@example.com" && passwordInput.value === "password123") {
-        resolve({ success: true });
-      } else {
-        resolve({ success: false, error: "Incorrect email or password." });
-      }
-    }, 1000)); // Simulate 1 second network delay
+    const response = await fetch("https://server.bartbong.com/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: emailInput.value,
+        password: passwordInput.value,
+      }),
+    });
 
-    if (response.success) {
-      console.log("Email Login Successful:", emailInput.value);
-      localStorage.setItem("is_signed_in", "true");
-      router.push("/");
+    const data = await response.json();
+
+    if (response.ok) { // Check if the response status is 2xx
+      console.log("Email Login Successful:", data);
+      localStorage.setItem("session_token", data.session_token); // Store session token
+      localStorage.setItem("user_id", data.user_id); // Store user ID
+      localStorage.setItem("is_signed_in", "true"); // Keep this for existing logic if any
+      router.push("/chat"); // Redirect to chat screen
     } else {
+      console.error("Email Login Failed:", data);
       titleLabel.value = "Login Failed";
-      messageLabel.value = response.error;
+      messageLabel.value = data.message || "Incorrect email or password.";
       showCustomDialog.value = true;
     }
   } catch (error) {

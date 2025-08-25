@@ -9,12 +9,14 @@ import LoadingIndicator from "../view_controllers/pop_up_dialog/LoadingIndicator
 const { proxy } = getCurrentInstance();
 const languageState = proxy.$language;
 
-const fullNameInput = ref("");
+const usernameInput = ref("");
 const dobInput = ref("");
-const nationalityInput = ref("");
 const emailInput = ref("");
 const passwordInput = ref("");
 const confirmPasswordInput = ref("");
+const sexInput = ref(""); // Initialize with an empty string or default value
+const phoneNumberInput = ref("");
+const addressInput = ref("");
 const showCustomDialog = ref(false);
 const showLoadingDialog = ref(false);
 
@@ -27,17 +29,29 @@ const router = useRouter();
 var registerKhmer = "ចុះឈ្មោះ";
 var registerEnglish = "Register";
 
-var toContinueKhmer = "ដើម្បីបង្កើតគណនីបាទបង";
+var toContinueKhmer = "ដើម្បីបង្កើតគណណីបាទបង";
 var toContinueEnglish = "to create a Bart Bong account";
 
-var fullNameKhmer = "ឈ្មោះពេញ";
-var fullNameEnglish = "Full Name";
+var usernameKhmer = "ឈ្មោះអ្នកប្រើប្រាស់";
+var usernameEnglish = "Username";
 
 var dobKhmer = "ថ្ងៃខែឆ្នាំកំណើត";
 var dobEnglish = "Date of Birth";
 
-var nationalityKhmer = "សញ្ជាតិ";
-var nationalityEnglish = "Nationality";
+var sexKhmer = "ភេទ";
+var sexEnglish = "Sex";
+var maleKhmer = "ប្រុស";
+var maleEnglish = "Male";
+var femaleKhmer = "ស្រី";
+var femaleEnglish = "Female";
+var preferNotToTellKhmer = "មិនប្រាប់";
+var preferNotToTellEnglish = "Prefer not to tell";
+
+var phoneNumberKhmer = "លេខទូរស័ព្ទ";
+var phoneNumberEnglish = "Phone Number";
+
+var addressKhmer = "អាសយដ្ឋាន";
+var addressEnglish = "Address";
 
 var emailKhmer = "អ៊ីមែល";
 var emailEnglish = "Email";
@@ -60,9 +74,9 @@ function toggleLanguage() {
 }
 
 async function registerWithEmail() {
-  if (!fullNameInput.value || !emailInput.value || !passwordInput.value || !confirmPasswordInput.value) {
+  if (!usernameInput.value || !emailInput.value || !passwordInput.value || !confirmPasswordInput.value) {
     titleLabel.value = "Input Error";
-    messageLabel.value = "Please fill in all required fields (Full Name, Email, Password, Confirm Password).";
+    messageLabel.value = "Please fill in all required fields (Username, Email, Password, Confirm Password).";
     showCustomDialog.value = true;
     return;
   }
@@ -76,24 +90,31 @@ async function registerWithEmail() {
 
   showLoadingDialog.value = true;
   try {
-    // Simulate API call for registration
-    const response = await new Promise(resolve => setTimeout(() => {
-      // Here you would typically call a backend API to register the user
-      // For demonstration, we'll just simulate success after a delay
-      if (emailInput.value === "existing@example.com") {
-        resolve({ success: false, error: "Email already registered." });
-      } else {
-        resolve({ success: true });
-      }
-    }, 1000));
+    const response = await fetch("https://server.bartbong.com/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: emailInput.value,
+        password: passwordInput.value,
+        username: usernameInput.value,
+        date_of_birth: dobInput.value || undefined,
+        sex: sexInput.value === 'Prefer not to tell' ? '' : sexInput.value || undefined, // Send empty string if 'Prefer not to tell'
+        phone_number: phoneNumberInput.value || undefined,
+        address: addressInput.value || undefined,
+      }),
+    });
 
-    if (response.success) {
-      console.log("Registration Successful:", emailInput.value);
-      // Redirect to login or home after successful registration
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log("Registration Successful:", data);
+      titleLabel.value = data.status;
+      messageLabel.value = data.message;
+      showCustomDialog.value = true;
       router.push("/login");
     } else {
-      titleLabel.value = "Registration Failed";
-      messageLabel.value = response.error;
+      titleLabel.value = data.status;
+      messageLabel.value = data.message;
       showCustomDialog.value = true;
     }
   } catch (error) {
@@ -131,20 +152,35 @@ function goToLogin() {
       }}</label>
 
       <form @submit.prevent="registerWithEmail" style="width: 100%">
-        <input class="custom_input_style margin_top_ten" v-model="fullNameInput" type="text"
-          :placeholder="languageState.isKhmer ? fullNameKhmer : fullNameEnglish" autocomplete="name" required />
-        <input class="custom_input_style margin_top_ten" v-model="dobInput" type="date"
-          :placeholder="languageState.isKhmer ? dobKhmer : dobEnglish" autocomplete="bday" />
-        <input class="custom_input_style margin_top_ten" v-model="nationalityInput" type="text"
-          :placeholder="languageState.isKhmer ? nationalityKhmer : nationalityEnglish" />
+        <input class="custom_input_style margin_top_ten" v-model="usernameInput" type="text"
+          :placeholder="languageState.isKhmer ? usernameKhmer : usernameEnglish" autocomplete="username" required />
         
         <input class="custom_input_style margin_top_ten" v-model="emailInput" type="email"
           :placeholder="languageState.isKhmer ? emailKhmer : emailEnglish" autocomplete="email" required />
+
+        <!-- Optional fields -->
+        <input class="custom_input_style margin_top_ten" v-model="dobInput" type="date"
+          :placeholder="languageState.isKhmer ? dobKhmer : dobEnglish" autocomplete="bday" />
+        
+        <select class="custom_input_style margin_top_ten" v-model="sexInput">
+          <option value="" disabled selected>{{ languageState.isKhmer ? sexKhmer : sexEnglish }}</option>
+          <option value="Male">{{ languageState.isKhmer ? maleKhmer : maleEnglish }}</option>
+          <option value="Female">{{ languageState.isKhmer ? femaleKhmer : femaleEnglish }}</option>
+          <option value="Prefer not to tell">{{ languageState.isKhmer ? preferNotToTellKhmer : preferNotToTellEnglish }}</option>
+        </select>
+
+        <input class="custom_input_style margin_top_ten" v-model="phoneNumberInput" type="tel"
+          :placeholder="languageState.isKhmer ? phoneNumberKhmer : phoneNumberEnglish" autocomplete="tel" />
+        <input class="custom_input_style margin_top_ten" v-model="addressInput" type="text"
+          :placeholder="languageState.isKhmer ? addressKhmer : addressEnglish" autocomplete="address" />
+
+        <!-- Password fields moved to the end -->
         <input class="custom_input_style margin_top_ten" v-model="passwordInput" type="password"
           :placeholder="languageState.isKhmer ? passwordKhmer : passwordEnglish" autocomplete="new-password" required />
         <input class="custom_input_style margin_top_ten" v-model="confirmPasswordInput" type="password"
           :placeholder="languageState.isKhmer ? confirmPasswordKhmer : confirmPasswordEnglish"
           autocomplete="new-password" required />
+
         <button class="custom_button_style margin_top_ten" type="submit">
           {{ languageState.isKhmer ? registerKhmer : registerEnglish }}
         </button>
@@ -259,7 +295,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .custom_button_style:hover {
   background-color: #0d6efd; /* Darker blue on hover */
 }
-
 .margin_top_ten {
   margin-top: 15px; /* Increased margin for better spacing */
 }

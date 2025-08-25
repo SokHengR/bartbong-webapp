@@ -10,12 +10,21 @@ import Privacy from "../view_controllers/Privacy.vue";
 import Term from "../view_controllers/Terms.vue";
 import ChumChat from "../view_controllers/ChumChatScreen.vue";
 import NotFound from "../view_controllers/NotFoundScreen.vue"
-import Registration from "../view_controllers/RegistrationScreen.vue"; // Import RegistrationScreen
+import Registration from "../view_controllers/RegistrationScreen.vue";
+import ChatScreen from "../view_controllers/ChatScreen.vue"; // Import ChatScreen
+
+function isAuthenticated() {
+  return localStorage.getItem('session_token') !== null;
+}
 
 const routes = [
-  { path: "/", component: HomeWrapper },
-  { path: "/login", component: Login },
-  { path: "/register", component: Registration }, // Add the registration route
+  { 
+    path: "/", 
+    component: HomeWrapper,
+    meta: { requiresAuth: false, redirectIfAuthenticated: '/chat' } // Redirect to /chum if authenticated
+  },
+  { path: "/login", component: Login, meta: { redirectIfAuthenticated: '/chat' } },
+  { path: "/register", component: Registration, meta: { redirectIfAuthenticated: '/chat' } },
   { path: "/privacy", component: Privacy },
   { path: "/term", component: Term },
   { path: "/notfound", component: NotFound },
@@ -24,7 +33,8 @@ const routes = [
   { path: "/product", component: Product },
   { path: "/pricing", component: Pricing },
   { path: "/thank", component: Thank },
-  { path: "/chum", component: ChumChat },
+  { path: "/chum", component: ChumChat, meta: { requiresAuth: true } }, // Chat screen requires authentication
+  { path: "/chat", component: ChatScreen, meta: { requiresAuth: true } }, // Chat screen requires authentication
   { path: "/:pathMatch(.*)*", redirect: "/notfound" },
 ];
 
@@ -34,7 +44,15 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  next();
+  const authenticated = isAuthenticated();
+
+  if (to.meta.redirectIfAuthenticated && authenticated) {
+    next(to.meta.redirectIfAuthenticated);
+  } else if (to.meta.requiresAuth && !authenticated) {
+    next('/login');
+  } else {
+    next();
+  }
 });
 
 export default router;
