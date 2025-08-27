@@ -44,9 +44,32 @@ function toggleExpand() {
   isExpand.value = !isExpand.value;
 }
 
-function clearAllChat() {
+async function clearAllChat() {
   console.log("Clean Chat");
-  chatArray.value = [];
+  const sessionToken = localStorage.getItem("session_token");
+  if (!sessionToken) {
+    console.error("Session token not found. Unable to clear chat.");
+    return;
+  }
+
+  try {
+    const response = await fetch(`https://server.bartbong.com/api/chat/all_chat_list?token=${sessionToken}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (response.ok) {
+      console.log("All chat history cleared successfully on the server.");
+      chatArray.value = [];
+    } else {
+      console.error("Failed to clear chat history on the server.");
+      // Optionally, handle error response from the server
+    }
+  } catch (error) {
+    console.error("Error clearing chat history:", error);
+  }
 }
 
 function setIsGeneratingTo(isActive) {
