@@ -69,7 +69,7 @@ async function loginWithEmail() {
 
     const data = await response.json();
 
-    if (response.ok) { // Check if the response status is 2xx
+    if (response.ok && data.session_token && data.user_id) { // Check if the response status is 2xx AND session_token and user_id are present
       console.log("Email Login Successful:", data);
       localStorage.setItem("session_token", data.session_token); // Store session token
       localStorage.setItem("user_id", data.user_id); // Store user ID
