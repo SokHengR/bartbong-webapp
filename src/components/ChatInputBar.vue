@@ -16,6 +16,7 @@ const type_khmer = "បាទបង?";
 
 const text = ref("");
 const khmerResponse = ref(true)
+const conversationId = ref(""); // Add conversationId ref
 
 const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom"]);
 const router = useRouter(); // Initialize useRouter
@@ -51,7 +52,7 @@ async function fetch_api(message_content) {
     const preferLang = khmerResponse.value ? "kh" : "en";
 
     const requestBody = {
-      conversationId: "",
+      conversationId: conversationId.value, // Use the conversationId ref
       chatStructure: {
         content: message_content,
         metaContent: message_content,
@@ -77,6 +78,10 @@ async function fetch_api(message_content) {
     }
 
     if (response.data && response.data.chatStructure) {
+      // Update conversationId if present in the response
+      if (response.data.conversationId) {
+        conversationId.value = response.data.conversationId;
+      }
       add_new_message(response.data.chatStructure.role, response.data.chatStructure.content);
     } else {
       console.error("Invalid response format:", response.data);
