@@ -18,7 +18,7 @@ const text = ref("");
 const khmerResponse = ref(true)
 const conversationId = ref(""); // Add conversationId ref
 
-const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom"]);
+const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom", "message-sent"]);
 const router = useRouter(); // Initialize useRouter
 
 const isSendButtonEnabled = computed(() => {
@@ -83,6 +83,7 @@ async function fetch_api(message_content) {
         conversationId.value = response.data.conversationId;
       }
       add_new_message(response.data.chatStructure.role, response.data.chatStructure.content);
+      emit('message-sent');
     } else {
       console.error("Invalid response format:", response.data);
     }

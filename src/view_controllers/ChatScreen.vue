@@ -93,7 +93,7 @@ async function deleteChatHistory(conversationId) {
       ChatHistoryArray.value = ChatHistoryArray.value.filter(chat => chat.id !== conversationId);
     } else {
       console.error(`Failed to delete chat history with ID ${conversationId} on the server.`);
-    }
+    };
   } catch (error) {
     console.error("Error deleting chat history:", error);
   }
@@ -179,7 +179,7 @@ function openConfirmDialog() {
   <div class="split_view_container">
     <ChatView :isExpand="isExpand" :isKhmer="isKhmer" :isGenerating="isGenerating" :isSignedIn="isSignedIn"
       :chatArray="chatArray" @toggle-expand="toggleExpand" @set-is-generating-to="setIsGeneratingTo"
-      @showProfileDialog="setProfileDialog" />
+      @showProfileDialog="setProfileDialog" @message-sent="fetchChatHistory" />
     <SideBar :isExpand="isExpand" :isKhmer="isKhmer" :isDesktop="true" :showFeedback="showFeedbackDialog"
       :chatList="chatArray" :chatHistoryArray="ChatHistoryArray" @toggle-expand="toggleExpand" @clear-all-chat="openConfirmDialog"
       @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" @delete-chat-history="deleteChatHistory" />

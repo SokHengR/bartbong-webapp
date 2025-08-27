@@ -12,7 +12,7 @@ const props = defineProps({
   chatArray: Array,
 });
 
-const emit = defineEmits(["toggle-expand", "set-is-generating-to", "showProfileDialog"]);
+const emit = defineEmits(["toggle-expand", "set-is-generating-to", "showProfileDialog", "message-sent"]);
 
 const chatListScrollView = ref(null);
 
@@ -35,6 +35,10 @@ function scrollToBottom() {
 
 function presentLoginScreen() {
   window.location.href = "/login";
+}
+
+function handleMessageSent() {
+  emit('message-sent');
 }
 </script>
 
@@ -81,7 +85,7 @@ function presentLoginScreen() {
 
       <ChatInputBar :isKhmer="isKhmer" :isGenerating="isGenerating" :chatArray="chatArray" @set-is-generating-to="
         (isActive) => emit('set-is-generating-to', isActive)
-      " @scroll-to-bottom="scrollToBottom" />
+      " @scroll-to-bottom="scrollToBottom" @message-sent="handleMessageSent" />
     </div>
 
     <div class="mini_friendly_reminder no_break_line">
