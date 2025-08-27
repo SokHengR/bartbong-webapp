@@ -1,7 +1,8 @@
 <script setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
 import ThemeButton from "./CustomButton/ThemeButton.vue";
 import ChatHistoryCell from "./ChatCellView/ChatHistoryCell.vue"; // Import ChatHistoryCell
+import SettingDialog from "../view_controllers/pop_up_dialog/SettingDialog.vue";
 
 import bart_bong_long from "/src/assets/bart_bong_long.png";
 import bart_bong_short from "/src/assets/bart_bong_short.png";
@@ -55,6 +56,8 @@ const setting_khmer = "ការកំណត់";
 const clear_english = "Clear All Chat";
 const clear_khmer = "ជម្រះការពិភាក្សាទាំងអស់";
 
+const showSettingDialog = ref(false);
+
 function desktopClass() {
   if (props.isDesktop) {
     return " desktop_device";
@@ -72,6 +75,12 @@ function toggle_sys_language() {
 }
 function show_feedback_dialog() {
   emit("show-feedback-dialog");
+}
+function show_setting_dialog_func() {
+  showSettingDialog.value = true;
+}
+function close_setting_dialog_func() {
+  showSettingDialog.value = false;
 }
 
 function handleDeleteChat(chatId) {
@@ -105,7 +114,7 @@ function handleDeleteChat(chatId) {
       <ThemeButton :buttonText="props.isKhmer ? feedback_khmer : feedback_english" :imageSrc="reviewIcon"
         identification="feedback_label" @click="show_feedback_dialog()" />
       <ThemeButton :buttonText="props.isKhmer ? setting_khmer : setting_english" :imageSrc="settingIcon"
-        identification="setting_label" />
+        identification="setting_label" @click="show_setting_dialog_func()" />
     </div>
 
     <div v-if="!isExpand && isDesktop" class="inner_sidebar_container">
@@ -123,7 +132,7 @@ function handleDeleteChat(chatId) {
         <img class="standard_icon_size" :src="reviewIcon" alt="Feedback" />
       </div>
 
-      <div class="button_theme">
+      <div class="button_theme" @click="show_setting_dialog_func()">
         <img class="standard_icon_size" :src="settingIcon" alt="Setting" />
       </div>
     </div>
@@ -146,6 +155,8 @@ function handleDeleteChat(chatId) {
         identification="delete_label" isRed @click="clear_all_chat()" />
     </div>
   </div>
+
+  <SettingDialog v-if="showSettingDialog" @close_setting_dialog="close_setting_dialog_func" />
 </template>
 
 <style scoped>
