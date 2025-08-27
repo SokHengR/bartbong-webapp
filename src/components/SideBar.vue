@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps, defineEmits } from "vue";
 import ThemeButton from "./CustomButton/ThemeButton.vue";
+import ChatHistoryCell from "./ChatCellView/ChatHistoryCell.vue"; // Import ChatHistoryCell
 
 import bart_bong_long from "/src/assets/bart_bong_long.png";
 import bart_bong_short from "/src/assets/bart_bong_short.png";
@@ -15,13 +16,18 @@ import menuIcon from "/src/assets/icon/menu.svg";
 import england_flag from "../assets/icon/us_flag.svg";
 import cambodia_flag from "../assets/icon/kh_flag.svg";
 
-const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language", "show-feedback-dialog"]);
+const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language", "show-feedback-dialog", "delete-chat-history"]);
 
 const props = defineProps({
   isExpand: Boolean,
   isKhmer: Boolean,
   isDesktop: Boolean,
   showFeedback: Boolean,
+  chatHistoryArray: {
+    // Add chatHistoryArray prop
+    type: Array,
+    default: () => [],
+  },
 });
 
 const sideBarWidth = "350px";
@@ -67,6 +73,10 @@ function toggle_sys_language() {
 function show_feedback_dialog() {
   emit("show-feedback-dialog");
 }
+
+function handleDeleteChat(chatId) {
+  emit('delete-chat-history', chatId);
+}
 </script>
 
 <template>
@@ -89,7 +99,7 @@ function show_feedback_dialog() {
       <ThemeButton :buttonText="props.isKhmer ? new_chat_khmer : new_chat_english" :imageSrc="addIcon"
         identification="new_chat_label" haveBorder />
       <ThemeButton :buttonText="props.isKhmer ? assistant_khmer : assistant_english" :imageSrc="group3"
-        identification="standard_icon_size" @click="$router.push('/chum')"/>
+        identification="standard_icon_size" @click="$router.push('/chum')" />
       <ThemeButton :buttonText="props.isKhmer ? file_khmer : file_english" :imageSrc="folderIcon"
         identification="standard_icon_size" />
       <ThemeButton :buttonText="props.isKhmer ? feedback_khmer : feedback_english" :imageSrc="reviewIcon"
@@ -120,7 +130,14 @@ function show_feedback_dialog() {
 
     <div v-if="isExpand" class="horizontal_line"></div>
 
-    <div v-if="isExpand" class="chat_history_list"></div>
+    <div v-if="isExpand" class="chat_history_list">
+      <ChatHistoryCell
+        v-for="chat in chatHistoryArray"
+        :key="chat.id"
+        :chatHistory="chat"
+        @delete-chat="handleDeleteChat"
+      />
+    </div>
 
     <div v-if="isExpand" class="horizontal_line"></div>
 
