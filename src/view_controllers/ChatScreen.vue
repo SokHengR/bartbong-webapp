@@ -8,6 +8,7 @@ import ProfileDialog from "./pop_up_dialog/ProfileDialog.vue";
 import DevelopmentDialog from "./pop_up_dialog/DevelopmentDialog.vue";
 import FeedbackDialog from "./pop_up_dialog/FeedbackDialog.vue";
 import ConfirmAlertDialog from "./pop_up_dialog/ConfirmAlertDialog.vue";
+import LoadingIndicator from "./pop_up_dialog/LoadingIndicator.vue";
 
 const router = useRouter();
 
@@ -21,6 +22,7 @@ const acceptDevelopmentWarning = ref(false);
 const showProfileDialog = ref(false);
 const showFeedbackDialog = ref(false);
 const showConfirmAlertDialog = ref(false)
+const showLoadingIndicator = ref(false); // New reactive variable for loading indicator
 
 const title_confirmDialog = ref("")
 const message_confirmDialog = ref("")
@@ -101,9 +103,11 @@ async function deleteChatHistory(conversationId) {
 
 async function clearAllChat() {
   console.log("Clean Chat");
+  showLoadingIndicator.value = true; // Show loading indicator
   const sessionToken = localStorage.getItem("session_token");
   if (!sessionToken) {
     console.error("Session token not found. Unable to clear chat.");
+    showLoadingIndicator.value = false; // Dismiss loading indicator on error
     return;
   }
 
@@ -125,6 +129,8 @@ async function clearAllChat() {
     }
   } catch (error) {
     console.error("Error clearing chat history:", error);
+  } finally {
+    showLoadingIndicator.value = false; // Dismiss loading indicator regardless of success or failure
   }
 }
 
@@ -176,6 +182,7 @@ function openConfirmDialog() {
   <FeedbackDialog v-if="showFeedbackDialog" @close_feedback_dialog="closeFeedbackDialog" :isKhmer="isKhmer" />
   <ConfirmAlertDialog v-if="showConfirmAlertDialog" :titleLabel="title_confirmDialog" :messageLabel="message_confirmDialog" @cancel_confirm_dialog="closeConfirmDialog"
     @accept_confirm_dialog="acceptConfirmDialog" />
+  <LoadingIndicator v-if="showLoadingIndicator" /> <!-- Loading Indicator component -->
   <div class="split_view_container">
     <ChatView :isExpand="isExpand" :isKhmer="isKhmer" :isGenerating="isGenerating" :isSignedIn="isSignedIn"
       :chatArray="chatArray" @toggle-expand="toggleExpand" @set-is-generating-to="setIsGeneratingTo"
