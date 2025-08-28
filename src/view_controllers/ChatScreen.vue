@@ -209,6 +209,12 @@ function openConfirmDialog() {
   message_confirmDialog.value = isKhmer.value ? messageConfirm_kh : messageConfirm_en;
   showConfirmAlertDialog.value = true;
 }
+
+function createNewChat() {
+  chatArray.value = [];
+  currentConversationId.value = "";
+  // The ChatInputBar will reset its internal conversationId when it receives an empty currentConversationId
+}
 </script>
 
 <template>
@@ -225,13 +231,13 @@ function openConfirmDialog() {
     <SideBar :isExpand="isExpand" :isKhmer="isKhmer" :isDesktop="true" :showFeedback="showFeedbackDialog"
       :chatList="chatArray" :chatHistoryArray="ChatHistoryArray" @toggle-expand="toggleExpand" @clear-all-chat="openConfirmDialog"
       @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" @delete-chat-history="deleteChatHistory"
-      @switch-conversation="handleSwitchConversation" />
+      @switch-conversation="handleSwitchConversation" @create-new-chat="createNewChat" />
   </div>
   <div v-if="isExpand" class="overlay_sidebar">
     <SideBar :isExpand="isExpand" :isKhmer="isKhmer" :isDesktop="false" :showFeedback="showFeedbackDialog"
       :chatList="chatArray" :chatHistoryArray="ChatHistoryArray" @toggle-expand="toggleExpand" @clear-all-chat="openConfirmDialog"
       @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" @delete-chat-history="deleteChatHistory"
-      @switch-conversation="handleSwitchConversation" />
+      @switch-conversation="handleSwitchConversation" @create-new-chat="createNewChat" />
     <div class="decoy_sidebar" @click="toggleExpand"></div>
   </div>
 </template>

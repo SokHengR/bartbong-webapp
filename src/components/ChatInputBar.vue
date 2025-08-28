@@ -2,7 +2,7 @@
 import axios from "axios";
 import khmerFlagIcon from "../assets/icon/kh_flag.svg";
 import englishFlagIcon from "../assets/icon/us_flag.svg";
-import { defineProps, defineEmits, ref, nextTick, computed, watchEffect } from "vue";
+import { defineProps, defineEmits, ref, nextTick, computed, watch } from "vue"; // Import watch
 import { useRouter } from "vue-router"; // Import useRouter
 
 const props = defineProps({
@@ -17,14 +17,14 @@ const type_khmer = "បាទបង?";
 
 const text = ref("");
 const khmerResponse = ref(true)
-const conversationId = ref(""); // Initialize with null
+const conversationId = ref(props.currentConversationId); // Initialize with prop
 
 const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom", "message-sent"]);
 const router = useRouter(); // Initialize useRouter
 
 // Watch for changes in currentConversationId prop and update local conversationId ref
-watchEffect(() => {
-  conversationId.value = props.currentConversationId;
+watch(() => props.currentConversationId, (newVal) => {
+  conversationId.value = newVal;
 });
 
 const isSendButtonEnabled = computed(() => {

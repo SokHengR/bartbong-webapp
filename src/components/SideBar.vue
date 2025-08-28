@@ -17,7 +17,7 @@ import menuIcon from "/src/assets/icon/menu.svg";
 import england_flag from "../assets/icon/us_flag.svg";
 import cambodia_flag from "../assets/icon/kh_flag.svg";
 
-const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language", "show-feedback-dialog", "delete-chat-history", "switch-conversation"]);
+const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language", "show-feedback-dialog", "delete-chat-history", "switch-conversation", "create-new-chat"]);
 
 const props = defineProps({
   isExpand: Boolean,
@@ -118,6 +118,11 @@ async function handleChatSelected(conversationId) {
     console.error("Error switching conversation:", error);
   }
 }
+
+function create_new_chat_button() {
+  emit("create-new-chat");
+  emit("toggle-expand");
+}
 </script>
 
 <template>
@@ -138,7 +143,7 @@ async function handleChatSelected(conversationId) {
 
     <div v-if="isExpand" class="inner_sidebar_container">
       <ThemeButton :buttonText="props.isKhmer ? new_chat_khmer : new_chat_english" :imageSrc="addIcon"
-        identification="new_chat_label" haveBorder />
+        identification="new_chat_label" haveBorder @click="create_new_chat_button()" />
       <ThemeButton :buttonText="props.isKhmer ? assistant_khmer : assistant_english" :imageSrc="group3"
         identification="standard_icon_size" @click="$router.push('/chum')" />
       <ThemeButton :buttonText="props.isKhmer ? file_khmer : file_english" :imageSrc="folderIcon"
@@ -150,7 +155,7 @@ async function handleChatSelected(conversationId) {
     </div>
 
     <div v-if="!isExpand && isDesktop" class="inner_sidebar_container">
-      <img class="button_border" :src="addIcon" alt="New Chat" />
+      <img class="button_border" :src="addIcon" alt="New Chat" @click="create_new_chat_button()" />
 
       <div class="button_theme" @click="$router.push('/chum')">
         <img class="standard_icon_size" :src="group3" alt="My Assistant" />
