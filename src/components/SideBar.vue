@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref, watch } from "vue";
 import ThemeButton from "./CustomButton/ThemeButton.vue";
 import ChatHistoryCell from "./ChatCellView/ChatHistoryCell.vue"; // Import ChatHistoryCell
 import SettingDialog from "../view_controllers/pop_up_dialog/SettingDialog.vue";
@@ -58,6 +58,13 @@ const clear_khmer = "ជម្រះការពិភាក្សាទាំ�
 
 const showSettingDialog = ref(false);
 
+// Create a local reactive copy of chatHistoryArray for immediate UI update
+const localChatHistoryArray = ref([]);
+
+watch(() => props.chatHistoryArray, (newVal) => {
+  localChatHistoryArray.value = [...newVal];
+}, { immediate: true }); // Initialize immediately
+
 function desktopClass() {
   if (props.isDesktop) {
     return " desktop_device";
@@ -84,6 +91,9 @@ function close_setting_dialog_func() {
 }
 
 function handleDeleteChat(chatId) {
+  // Update local array for immediate visual feedback
+  localChatHistoryArray.value = localChatHistoryArray.value.filter(chat => chat.id !== chatId);
+  // Emit to parent for actual state management
   emit('delete-chat-history', chatId);
 }
 </script>
@@ -141,7 +151,7 @@ function handleDeleteChat(chatId) {
 
     <div v-if="isExpand" class="chat_history_list">
       <ChatHistoryCell
-        v-for="chat in chatHistoryArray"
+        v-for="chat in localChatHistoryArray"
         :key="chat.id"
         :chatHistory="chat"
         @delete-chat="handleDeleteChat"
