@@ -17,7 +17,7 @@ import menuIcon from "/src/assets/icon/menu.svg";
 import england_flag from "../assets/icon/us_flag.svg";
 import cambodia_flag from "../assets/icon/kh_flag.svg";
 
-const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language", "show-feedback-dialog", "delete-chat-history"]);
+const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language", "show-feedback-dialog", "delete-chat-history", "switch-conversation"]);
 
 const props = defineProps({
   isExpand: Boolean,
@@ -96,6 +96,28 @@ function handleDeleteChat(chatId) {
   // Emit to parent for actual state management
   emit('delete-chat-history', chatId);
 }
+
+async function handleChatSelected(conversationId) {
+  try {
+    const sessionToken = localStorage.getItem("session_token");
+    if (!sessionToken) {
+      console.error("Session token not found.");
+      return;
+    }
+    const apiUrl = `http://127.0.0.1:8000/api/chat/conversations?token=${sessionToken}&conversation_id=${conversationId}`;
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Conversation switched successfully:", data);
+    emit('switch-conversation', conversationId); // Emit event to parent to update main chat view
+  } catch (error) {
+    console.error("Error switching conversation:", error);
+  }
+}
 </script>
 
 <template>
@@ -155,6 +177,7 @@ function handleDeleteChat(chatId) {
         :key="chat.id"
         :chatHistory="chat"
         @delete-chat="handleDeleteChat"
+        @chat-selected="handleChatSelected"
       />
     </div>
 

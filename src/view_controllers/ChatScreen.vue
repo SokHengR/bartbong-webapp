@@ -23,6 +23,7 @@ const showProfileDialog = ref(false);
 const showFeedbackDialog = ref(false);
 const showConfirmAlertDialog = ref(false)
 const showLoadingIndicator = ref(false); // New reactive variable for loading indicator
+const currentConversationId = ref(null); // New reactive variable for current conversation ID
 
 const title_confirmDialog = ref("")
 const message_confirmDialog = ref("")
@@ -93,6 +94,11 @@ async function deleteChatHistory(conversationId) {
     if (response.ok) {
       console.log(`Chat history with ID ${conversationId} deleted successfully.`);
       ChatHistoryArray.value = ChatHistoryArray.value.filter(chat => chat.id !== conversationId);
+      // Clear current conversation if the deleted one was active
+      if (currentConversationId.value === conversationId) {
+        currentConversationId.value = null;
+        chatArray.value = [];
+      }
     } else {
       console.error(`Failed to delete chat history with ID ${conversationId} on the server.`);
     };
@@ -122,6 +128,7 @@ async function clearAllChat() {
     if (response.ok) {
       console.log("All chat history cleared successfully on the server.");
       chatArray.value = [];
+      currentConversationId.value = null; // Clear current conversation ID
       fetchChatHistory(); // Refresh ChatHistoryArray after clearing
     } else {
       console.error("Failed to clear chat history on the server.");
@@ -131,6 +138,34 @@ async function clearAllChat() {
     console.error("Error clearing chat history:", error);
   } finally {
     showLoadingIndicator.value = false; // Dismiss loading indicator regardless of success or failure
+  }
+}
+
+async function handleSwitchConversation(conversationId) {
+  showLoadingIndicator.value = true;
+  try {
+    const sessionToken = localStorage.getItem("session_token");
+    if (!sessionToken) {
+      console.error("Session token not found.");
+      return;
+    }
+    const apiUrl = `http://127.0.0.1:8000/api/chat/conversations?token=${sessionToken}&conversation_id=${conversationId}`;
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    chatArray.value = []; // Clear current chat array
+    chatArray.value = data; // Populate with new conversation data
+    currentConversationId.value = conversationId; // Update currentConversationId
+    isGenerating.value = false; // Set isGenerating to false when switching conversations
+    console.log("Conversation switched successfully:", data);
+  } catch (error) {
+    console.error("Error switching conversation:", error);
+  } finally {
+    showLoadingIndicator.value = false;
   }
 }
 
@@ -185,16 +220,18 @@ function openConfirmDialog() {
   <LoadingIndicator v-if="showLoadingIndicator" /> <!-- Loading Indicator component -->
   <div class="split_view_container">
     <ChatView :isExpand="isExpand" :isKhmer="isKhmer" :isGenerating="isGenerating" :isSignedIn="isSignedIn"
-      :chatArray="chatArray" @toggle-expand="toggleExpand" @set-is-generating-to="setIsGeneratingTo"
+      :chatArray="chatArray" :currentConversationId="currentConversationId" @toggle-expand="toggleExpand" @set-is-generating-to="setIsGeneratingTo"
       @showProfileDialog="setProfileDialog" @message-sent="fetchChatHistory" />
     <SideBar :isExpand="isExpand" :isKhmer="isKhmer" :isDesktop="true" :showFeedback="showFeedbackDialog"
       :chatList="chatArray" :chatHistoryArray="ChatHistoryArray" @toggle-expand="toggleExpand" @clear-all-chat="openConfirmDialog"
-      @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" @delete-chat-history="deleteChatHistory" />
+      @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" @delete-chat-history="deleteChatHistory"
+      @switch-conversation="handleSwitchConversation" />
   </div>
   <div v-if="isExpand" class="overlay_sidebar">
     <SideBar :isExpand="isExpand" :isKhmer="isKhmer" :isDesktop="false" :showFeedback="showFeedbackDialog"
       :chatList="chatArray" :chatHistoryArray="ChatHistoryArray" @toggle-expand="toggleExpand" @clear-all-chat="openConfirmDialog"
-      @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" @delete-chat-history="deleteChatHistory" />
+      @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" @delete-chat-history="deleteChatHistory"
+      @switch-conversation="handleSwitchConversation" />
     <div class="decoy_sidebar" @click="toggleExpand"></div>
   </div>
 </template>

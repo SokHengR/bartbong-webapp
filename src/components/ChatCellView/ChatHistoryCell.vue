@@ -1,10 +1,10 @@
 <template>
-  <div class="chat_history_cell">
+  <div class="chat_history_cell" @click="selectChat">
     <div class="chat_info">
       <p class="chat_title">{{ chatTitle }}</p>
       <p class="chat_date">{{ formattedDate }}</p>
     </div>
-    <button @click="deleteChatHistory" class="delete_button">
+    <button @click.stop="deleteChatHistory" class="delete_button">
       <img src="../../assets/icon/delete.svg" alt="Delete" class="delete_icon" />
     </button>
   </div>
@@ -20,7 +20,7 @@ export default {
       required: true,
     },
   },
-  emits: ['delete-chat'],
+  emits: ['delete-chat', 'chat-selected'],
   setup(props, { emit }) {
     const chatTitle = computed(() => props.chatHistory.title || "New Chat");
 
@@ -44,10 +44,15 @@ export default {
       emit('delete-chat', props.chatHistory.id);
     };
 
+    const selectChat = () => {
+      emit('chat-selected', props.chatHistory.id);
+    };
+
     return {
       chatTitle,
       formattedDate,
       deleteChatHistory,
+      selectChat,
     };
   },
 };
