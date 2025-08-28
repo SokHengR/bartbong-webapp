@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref, watch } from "vue";
 import ThemeButton from "./CustomButton/ThemeButton.vue";
 import ChatHistoryCell from "./ChatCellView/ChatHistoryCell.vue"; // Import ChatHistoryCell
 import SettingDialog from "../view_controllers/pop_up_dialog/SettingDialog.vue";
@@ -17,7 +17,7 @@ import menuIcon from "/src/assets/icon/menu.svg";
 import england_flag from "../assets/icon/us_flag.svg";
 import cambodia_flag from "../assets/icon/kh_flag.svg";
 
-const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language", "show-feedback-dialog", "delete-chat-history"]);
+const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language", "show-feedback-dialog", "delete-chat-history", "switch-conversation", "create-new-chat"]);
 
 const props = defineProps({
   isExpand: Boolean,
@@ -58,6 +58,13 @@ const clear_khmer = "ជម្រះការពិភាក្សាទាំ�
 
 const showSettingDialog = ref(false);
 
+// Create a local reactive copy of chatHistoryArray for immediate UI update
+const localChatHistoryArray = ref([]);
+
+watch(() => props.chatHistoryArray, (newVal) => {
+  localChatHistoryArray.value = [...newVal];
+}, { immediate: true }); // Initialize immediately
+
 function desktopClass() {
   if (props.isDesktop) {
     return " desktop_device";
@@ -84,7 +91,37 @@ function close_setting_dialog_func() {
 }
 
 function handleDeleteChat(chatId) {
+  // Update local array for immediate visual feedback
+  localChatHistoryArray.value = localChatHistoryArray.value.filter(chat => chat.id !== chatId);
+  // Emit to parent for actual state management
   emit('delete-chat-history', chatId);
+}
+
+async function handleChatSelected(conversationId) {
+  try {
+    const sessionToken = localStorage.getItem("session_token");
+    if (!sessionToken) {
+      console.error("Session token not found.");
+      return;
+    }
+    const apiUrl = `http://127.0.0.1:8000/api/chat/conversations?token=${sessionToken}&conversation_id=${conversationId}`;
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Conversation switched successfully:", data);
+    emit('switch-conversation', conversationId); // Emit event to parent to update main chat view
+  } catch (error) {
+    console.error("Error switching conversation:", error);
+  }
+}
+
+function create_new_chat_button() {
+  emit("create-new-chat");
+  emit("toggle-expand");
 }
 </script>
 
@@ -106,7 +143,7 @@ function handleDeleteChat(chatId) {
 
     <div v-if="isExpand" class="inner_sidebar_container">
       <ThemeButton :buttonText="props.isKhmer ? new_chat_khmer : new_chat_english" :imageSrc="addIcon"
-        identification="new_chat_label" haveBorder />
+        identification="new_chat_label" haveBorder @click="create_new_chat_button()" />
       <ThemeButton :buttonText="props.isKhmer ? assistant_khmer : assistant_english" :imageSrc="group3"
         identification="standard_icon_size" @click="$router.push('/chum')" />
       <ThemeButton :buttonText="props.isKhmer ? file_khmer : file_english" :imageSrc="folderIcon"
@@ -118,7 +155,7 @@ function handleDeleteChat(chatId) {
     </div>
 
     <div v-if="!isExpand && isDesktop" class="inner_sidebar_container">
-      <img class="button_border" :src="addIcon" alt="New Chat" />
+      <img class="button_border" :src="addIcon" alt="New Chat" @click="create_new_chat_button()" />
 
       <div class="button_theme" @click="$router.push('/chum')">
         <img class="standard_icon_size" :src="group3" alt="My Assistant" />
@@ -141,10 +178,11 @@ function handleDeleteChat(chatId) {
 
     <div v-if="isExpand" class="chat_history_list">
       <ChatHistoryCell
-        v-for="chat in chatHistoryArray"
+        v-for="chat in localChatHistoryArray"
         :key="chat.id"
         :chatHistory="chat"
         @delete-chat="handleDeleteChat"
+        @chat-selected="handleChatSelected"
       />
     </div>
 

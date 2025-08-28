@@ -2,13 +2,14 @@
 import axios from "axios";
 import khmerFlagIcon from "../assets/icon/kh_flag.svg";
 import englishFlagIcon from "../assets/icon/us_flag.svg";
-import { defineProps, defineEmits, ref, nextTick, computed } from "vue";
+import { defineProps, defineEmits, ref, nextTick, computed, watch } from "vue"; // Import watch
 import { useRouter } from "vue-router"; // Import useRouter
 
 const props = defineProps({
   isKhmer: Boolean,
   isGenerating: Boolean,
   chatArray: Array,
+  currentConversationId: String, // New prop
 });
 
 const type_english = "Bart Bong?";
@@ -16,14 +17,23 @@ const type_khmer = "បាទបង?";
 
 const text = ref("");
 const khmerResponse = ref(true)
-const conversationId = ref(""); // Add conversationId ref
+const conversationId = ref(props.currentConversationId); // Initialize with prop
 
 const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom", "message-sent"]);
 const router = useRouter(); // Initialize useRouter
 
+// Watch for changes in currentConversationId prop and update local conversationId ref
+watch(() => props.currentConversationId, (newVal) => {
+  conversationId.value = newVal;
+});
+
 const isSendButtonEnabled = computed(() => {
   return text.value.trim() !== "";
 });
+
+function printConversationId() {
+  console.log("Conversation ID:", conversationId.value);
+}
 
 function send_message(message_content) {
   if (text.value.trim() !== "") {
@@ -112,7 +122,7 @@ function toggle_response_language() {
         <div class="button_border" style="padding: 5px">
           <img src="../assets/icon/attach_file.svg" />
         </div>
-        <div class="button_border" style="padding: 5px">
+        <div class="button_border" style="padding: 5px" @click="printConversationId()">
           <img src="../assets/icon/auto_fix.svg" />
         </div>
         <div class="button_border" style="padding: 5px" @click="toggle_response_language()">

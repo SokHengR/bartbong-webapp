@@ -10,6 +10,7 @@ const props = defineProps({
   isGenerating: Boolean,
   isSignedIn: Boolean,
   chatArray: Array,
+  currentConversationId: String, // New prop
 });
 
 const emit = defineEmits(["toggle-expand", "set-is-generating-to", "showProfileDialog", "message-sent"]);
@@ -83,7 +84,8 @@ function handleMessageSent() {
         </div>
       </div>
 
-      <ChatInputBar :isKhmer="isKhmer" :isGenerating="isGenerating" :chatArray="chatArray" @set-is-generating-to="
+      <ChatInputBar :isKhmer="isKhmer" :isGenerating="isGenerating" :chatArray="chatArray"
+        :currentConversationId="currentConversationId" @set-is-generating-to="
         (isActive) => emit('set-is-generating-to', isActive)
       " @scroll-to-bottom="scrollToBottom" @message-sent="handleMessageSent" />
     </div>
