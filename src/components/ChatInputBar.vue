@@ -17,7 +17,7 @@ const type_khmer = "បាទបង?";
 
 const text = ref("");
 const khmerResponse = ref(true)
-const conversationId = ref(null); // Initialize with null
+const conversationId = ref(""); // Initialize with null
 
 const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom", "message-sent"]);
 const router = useRouter(); // Initialize useRouter

@@ -23,7 +23,7 @@ const showProfileDialog = ref(false);
 const showFeedbackDialog = ref(false);
 const showConfirmAlertDialog = ref(false)
 const showLoadingIndicator = ref(false); // New reactive variable for loading indicator
-const currentConversationId = ref(null); // New reactive variable for current conversation ID
+const currentConversationId = ref(""); // New reactive variable for current conversation ID
 
 const title_confirmDialog = ref("")
 const message_confirmDialog = ref("")
