@@ -1,6 +1,8 @@
 <script setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
 import ThemeButton from "./CustomButton/ThemeButton.vue";
+import ChatHistoryCell from "./ChatCellView/ChatHistoryCell.vue"; // Import ChatHistoryCell
+import SettingDialog from "../view_controllers/pop_up_dialog/SettingDialog.vue";
 
 import bart_bong_long from "/src/assets/bart_bong_long.png";
 import bart_bong_short from "/src/assets/bart_bong_short.png";
@@ -15,13 +17,18 @@ import menuIcon from "/src/assets/icon/menu.svg";
 import england_flag from "../assets/icon/us_flag.svg";
 import cambodia_flag from "../assets/icon/kh_flag.svg";
 
-const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language", "show-feedback-dialog"]);
+const emit = defineEmits(["toggle-expand", "clear-all-chat", "toggle-language", "show-feedback-dialog", "delete-chat-history"]);
 
 const props = defineProps({
   isExpand: Boolean,
   isKhmer: Boolean,
   isDesktop: Boolean,
   showFeedback: Boolean,
+  chatHistoryArray: {
+    // Add chatHistoryArray prop
+    type: Array,
+    default: () => [],
+  },
 });
 
 const sideBarWidth = "350px";
@@ -49,6 +56,8 @@ const setting_khmer = "ការកំណត់";
 const clear_english = "Clear All Chat";
 const clear_khmer = "ជម្រះការពិភាក្សាទាំងអស់";
 
+const showSettingDialog = ref(false);
+
 function desktopClass() {
   if (props.isDesktop) {
     return " desktop_device";
@@ -66,6 +75,16 @@ function toggle_sys_language() {
 }
 function show_feedback_dialog() {
   emit("show-feedback-dialog");
+}
+function show_setting_dialog_func() {
+  showSettingDialog.value = true;
+}
+function close_setting_dialog_func() {
+  showSettingDialog.value = false;
+}
+
+function handleDeleteChat(chatId) {
+  emit('delete-chat-history', chatId);
 }
 </script>
 
@@ -89,13 +108,13 @@ function show_feedback_dialog() {
       <ThemeButton :buttonText="props.isKhmer ? new_chat_khmer : new_chat_english" :imageSrc="addIcon"
         identification="new_chat_label" haveBorder />
       <ThemeButton :buttonText="props.isKhmer ? assistant_khmer : assistant_english" :imageSrc="group3"
-        identification="standard_icon_size" @click="$router.push('/chum')"/>
+        identification="standard_icon_size" @click="$router.push('/chum')" />
       <ThemeButton :buttonText="props.isKhmer ? file_khmer : file_english" :imageSrc="folderIcon"
         identification="standard_icon_size" />
       <ThemeButton :buttonText="props.isKhmer ? feedback_khmer : feedback_english" :imageSrc="reviewIcon"
         identification="feedback_label" @click="show_feedback_dialog()" />
       <ThemeButton :buttonText="props.isKhmer ? setting_khmer : setting_english" :imageSrc="settingIcon"
-        identification="setting_label" />
+        identification="setting_label" @click="show_setting_dialog_func()" />
     </div>
 
     <div v-if="!isExpand && isDesktop" class="inner_sidebar_container">
@@ -113,14 +132,21 @@ function show_feedback_dialog() {
         <img class="standard_icon_size" :src="reviewIcon" alt="Feedback" />
       </div>
 
-      <div class="button_theme">
+      <div class="button_theme" @click="show_setting_dialog_func()">
         <img class="standard_icon_size" :src="settingIcon" alt="Setting" />
       </div>
     </div>
 
     <div v-if="isExpand" class="horizontal_line"></div>
 
-    <div v-if="isExpand" class="chat_history_list"></div>
+    <div v-if="isExpand" class="chat_history_list">
+      <ChatHistoryCell
+        v-for="chat in chatHistoryArray"
+        :key="chat.id"
+        :chatHistory="chat"
+        @delete-chat="handleDeleteChat"
+      />
+    </div>
 
     <div v-if="isExpand" class="horizontal_line"></div>
 
@@ -129,6 +155,8 @@ function show_feedback_dialog() {
         identification="delete_label" isRed @click="clear_all_chat()" />
     </div>
   </div>
+
+  <SettingDialog v-if="showSettingDialog" @close_setting_dialog="close_setting_dialog_func" />
 </template>
 
 <style scoped>

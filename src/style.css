@@ -6,12 +6,24 @@ body {
   width: 100%;
   padding: 0px;
   margin: 0px;
-  font-family: 'Noto Sans Khmer', sans-serif;
+  font-family: 'Noto Sans', sans-serif;
+}
+
+html.khmer-lang,
+html.khmer-lang body {
+  font-family: 'Noto Sans Khmer', 'Noto Sans', sans-serif;
 }
 
 div,
-input {
-  font-family: 'Noto Sans Khmer', sans-serif;
+input,
+button { /* Added button to apply font to buttons */
+  font-family: 'Noto Sans', sans-serif;
+}
+
+html.khmer-lang div,
+html.khmer-lang input,
+html.khmer-lang button { /* Added button to apply font to buttons */
+  font-family: 'Noto Sans Khmer', 'Noto Sans', sans-serif;
 }
 
 .standard_icon_size {

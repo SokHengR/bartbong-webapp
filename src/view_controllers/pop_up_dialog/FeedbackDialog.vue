@@ -55,7 +55,7 @@ function closeAlert() {
 
 .scoped_button_size {
   width: 100%;
-  font-family: 'Noto Sans Khmer', sans-serif;
+  font-family: 'Noto Sans', sans-serif;
 }
 
 .scoped_text_editor {

@@ -1,17 +1,9 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '../firebase'
+import { ref } from 'vue'
 import Chat from './ChatScreen.vue'
 import Portfolio from './HomeScreen.vue'
 
-const currentView = ref(auth.currentUser ? Chat : Portfolio)
-
-onMounted(() => {
-    onAuthStateChanged(auth, user => {
-        currentView.value = user ? Chat : Portfolio
-    })
-})
+const currentView = ref(Portfolio)
 </script>
 
 <template>

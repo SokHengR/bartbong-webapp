@@ -10,12 +10,21 @@ import Privacy from "../view_controllers/Privacy.vue";
 import Term from "../view_controllers/Terms.vue";
 import ChumChat from "../view_controllers/ChumChatScreen.vue";
 import NotFound from "../view_controllers/NotFoundScreen.vue"
-import { auth } from "../firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import Registration from "../view_controllers/RegistrationScreen.vue";
+import ChatScreen from "../view_controllers/ChatScreen.vue"; // Import ChatScreen
+
+function isAuthenticated() {
+  return localStorage.getItem('session_token') !== null;
+}
 
 const routes = [
-  { path: "/", component: HomeWrapper },
-  { path: "/login", component: Login },
+  { 
+    path: "/", 
+    component: HomeWrapper,
+    meta: { requiresAuth: false, redirectIfAuthenticated: '/chat' } // Redirect to /chum if authenticated
+  },
+  { path: "/login", component: Login, meta: { redirectIfAuthenticated: '/chat' } },
+  { path: "/register", component: Registration, meta: { redirectIfAuthenticated: '/chat' } },
   { path: "/privacy", component: Privacy },
   { path: "/term", component: Term },
   { path: "/notfound", component: NotFound },
@@ -24,7 +33,8 @@ const routes = [
   { path: "/product", component: Product },
   { path: "/pricing", component: Pricing },
   { path: "/thank", component: Thank },
-  { path: "/chum", component: ChumChat, meta: { requiresAuth: true } },
+  { path: "/chum", component: ChumChat, meta: { requiresAuth: true } }, // Chat screen requires authentication
+  { path: "/chat", component: ChatScreen, meta: { requiresAuth: true } }, // Chat screen requires authentication
   { path: "/:pathMatch(.*)*", redirect: "/notfound" },
 ];
 
@@ -33,41 +43,15 @@ const router = createRouter({
   routes,
 });
 
-let isFirebaseInitialized = false;
-
-onAuthStateChanged(auth, (user) => {
-  isFirebaseInitialized = true;
-  if (user && router.currentRoute.value.path === "/login") {
-    router.push("/");
-  }
-  if (!user && router.currentRoute.value.meta.requiresAuth) {
-    router.push("/login");
-  }
-});
-
 router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
-  const isAuthenticated = auth.currentUser;
+  const authenticated = isAuthenticated();
 
-  if (!isFirebaseInitialized) {
-    onAuthStateChanged(auth, () => {
-      const isAuthenticatedAfterInit = auth.currentUser;
-      if (requiresAuth && !isAuthenticatedAfterInit) {
-        next("/login");
-      } else if (to.path === "/login" && isAuthenticatedAfterInit) {
-        next("/");
-      } else {
-        next();
-      }
-    });
+  if (to.meta.redirectIfAuthenticated && authenticated) {
+    next(to.meta.redirectIfAuthenticated);
+  } else if (to.meta.requiresAuth && !authenticated) {
+    next('/login');
   } else {
-    if (requiresAuth && !isAuthenticated) {
-      next("/login");
-    } else if (to.path === "/login" && isAuthenticated) {
-      next("/");
-    } else {
-      next();
-    }
+    next();
   }
 });
 

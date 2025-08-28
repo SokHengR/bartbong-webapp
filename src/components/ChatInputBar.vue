@@ -3,6 +3,7 @@ import axios from "axios";
 import khmerFlagIcon from "../assets/icon/kh_flag.svg";
 import englishFlagIcon from "../assets/icon/us_flag.svg";
 import { defineProps, defineEmits, ref, nextTick, computed } from "vue";
+import { useRouter } from "vue-router"; // Import useRouter
 
 const props = defineProps({
   isKhmer: Boolean,
@@ -15,8 +16,10 @@ const type_khmer = "បាទបង?";
 
 const text = ref("");
 const khmerResponse = ref(true)
+const conversationId = ref(""); // Add conversationId ref
 
-const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom"]);
+const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom", "message-sent"]);
+const router = useRouter(); // Initialize useRouter
 
 const isSendButtonEnabled = computed(() => {
   return text.value.trim() !== "";
@@ -43,19 +46,44 @@ function add_new_message(user_type, message_content) {
   emit("scroll-to-bottom");
 }
 
-async function fetch_api() {
+async function fetch_api(message_content) {
   try {
+    const authToken = localStorage.getItem("session_token"); // Get auth token from local storage
+    const preferLang = khmerResponse.value ? "kh" : "en";
+
+    const requestBody = {
+      conversationId: conversationId.value, // Use the conversationId ref
+      chatStructure: {
+        content: message_content,
+        metaContent: message_content,
+        role: "user",
+        preferLang: preferLang,
+      },
+    };
+
     const response = await axios.post(
-      "https://server.bartbong.com/v1/chat/completions",
-      props.chatArray
+      `https://server.bartbong.com/api/chat?authToken=${authToken}`,
+      requestBody
     );
 
     console.log(response)
 
     emit("set-is-generating-to", false);
 
-    if (response.data && response.data.content) {
-      add_new_message(response.data.role, response.data.content);
+    if (response.data && response.data.status === "fail" && response.data.message === "unauthorized") {
+      localStorage.clear();
+      console.log("Unauthorized: Local storage cleared.");
+      router.push('/login'); // Navigate to login page
+      return; 
+    }
+
+    if (response.data && response.data.chatStructure) {
+      // Update conversationId if present in the response
+      if (response.data.conversationId) {
+        conversationId.value = response.data.conversationId;
+      }
+      add_new_message(response.data.chatStructure.role, response.data.chatStructure.content);
+      emit('message-sent');
     } else {
       console.error("Invalid response format:", response.data);
     }

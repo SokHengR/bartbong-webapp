@@ -12,7 +12,7 @@ const props = defineProps({
   chatArray: Array,
 });
 
-const emit = defineEmits(["toggle-expand", "set-is-generating-to", "showProfileDialog"]);
+const emit = defineEmits(["toggle-expand", "set-is-generating-to", "showProfileDialog", "message-sent"]);
 
 const chatListScrollView = ref(null);
 
@@ -23,8 +23,6 @@ const make_mistake_english =
   "Bart Bong can make mistakes. Please double-check.";
 const make_mistake_khmer =
   "កម្មវិធីបាទបងអាចនឹងផ្តល់នូវព័ត៌មានមិនត្រឹមត្រូវ សូមបងត្រួតពិនិត្យមើលផង";
-const signin_english = "Sign In";
-const signin_khmer = "ចូលគណនី";
 
 function scrollToBottom() {
   nextTick(() => {
@@ -37,6 +35,10 @@ function scrollToBottom() {
 
 function presentLoginScreen() {
   window.location.href = "/login";
+}
+
+function handleMessageSent() {
+  emit('message-sent');
 }
 </script>
 
@@ -83,7 +85,7 @@ function presentLoginScreen() {
 
       <ChatInputBar :isKhmer="isKhmer" :isGenerating="isGenerating" :chatArray="chatArray" @set-is-generating-to="
         (isActive) => emit('set-is-generating-to', isActive)
-      " @scroll-to-bottom="scrollToBottom" />
+      " @scroll-to-bottom="scrollToBottom" @message-sent="handleMessageSent" />
     </div>
 
     <div class="mini_friendly_reminder no_break_line">
