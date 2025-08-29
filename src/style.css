@@ -43,6 +43,7 @@ html.khmer-lang button { /* Added button to apply font to buttons */
   height: 30px;
   cursor: pointer;
   border-radius: 5px;
+  user-select: none;
 }
 
 .icon_button:hover {
@@ -60,6 +61,7 @@ html.khmer-lang button { /* Added button to apply font to buttons */
   align-items: center;
   gap: 10px;
   justify-content: center;
+  user-select: none;
 }
 
 .button_theme:hover {
@@ -79,6 +81,7 @@ html.khmer-lang button { /* Added button to apply font to buttons */
   flex-direction: row;
   backdrop-filter: blur(10px);
   gap: 5px;
+  user-select: none;
 }
 
 .button_border:hover {
@@ -98,6 +101,7 @@ html.khmer-lang button { /* Added button to apply font to buttons */
   flex-direction: row;
   backdrop-filter: blur(10px);
   gap: 5px;
+  user-select: none;
 }
 
 .danger_button_border:hover {
@@ -117,6 +121,7 @@ html.khmer-lang button { /* Added button to apply font to buttons */
   flex-direction: row;
   backdrop-filter: blur(10px);
   gap: 5px;
+  user-select: none;
 }
 
 .warn_button_border:hover {
@@ -136,6 +141,7 @@ html.khmer-lang button { /* Added button to apply font to buttons */
   flex-direction: row;
   backdrop-filter: blur(10px);
   gap: 5px;
+  user-select: none;
 }
 
 .safe_button_border:hover {
@@ -155,6 +161,7 @@ html.khmer-lang button { /* Added button to apply font to buttons */
   flex-direction: row;
   backdrop-filter: blur(10px);
   gap: 5px;
+  user-select: none;
 }
 
 .theme_button_border:hover {
