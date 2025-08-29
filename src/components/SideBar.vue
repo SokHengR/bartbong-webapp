@@ -121,7 +121,6 @@ async function handleChatSelected(conversationId) {
 
 function create_new_chat_button() {
   emit("create-new-chat");
-  emit("toggle-expand");
 }
 </script>
 
