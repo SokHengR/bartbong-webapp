@@ -16,7 +16,7 @@ const type_english = "Bart Bong?";
 const type_khmer = "បាទបង?";
 
 const text = ref("");
-const khmerResponse = ref(true)
+const khmerResponse = ref(false)
 const conversationId = ref(props.currentConversationId); // Initialize with prop
 
 const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom", "message-sent"]);
