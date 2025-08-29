@@ -149,7 +149,7 @@ async function handleSwitchConversation(conversationId) {
       console.error("Session token not found.");
       return;
     }
-    const apiUrl = `http://127.0.0.1:8000/api/chat/conversations?token=${sessionToken}&conversation_id=${conversationId}`;
+    const apiUrl = `https://server.bartbong.com/api/chat/conversations?token=${sessionToken}&conversation_id=${conversationId}`;
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
