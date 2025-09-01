@@ -1,7 +1,7 @@
 <script setup>
 import { defineProps, defineEmits, ref, watch } from "vue";
 import ThemeButton from "./CustomButton/ThemeButton.vue";
-import ChatHistoryCell from "./ChatCellView/ChatHistoryCell.vue"; // Import ChatHistoryCell
+import ChatHistoryCell from "./ChatCellView/ChatHistoryCell.vue";
 import SettingDialog from "../view_controllers/pop_up_dialog/SettingDialog.vue";
 
 import bart_bong_long from "/src/assets/bart_bong_long.png";
@@ -25,7 +25,6 @@ const props = defineProps({
   isDesktop: Boolean,
   showFeedback: Boolean,
   chatHistoryArray: {
-    // Add chatHistoryArray prop
     type: Array,
     default: () => [],
   },
@@ -58,12 +57,11 @@ const clear_khmer = "ជម្រះការពិភាក្សាទាំ�
 
 const showSettingDialog = ref(false);
 
-// Create a local reactive copy of chatHistoryArray for immediate UI update
 const localChatHistoryArray = ref([]);
 
 watch(() => props.chatHistoryArray, (newVal) => {
   localChatHistoryArray.value = [...newVal];
-}, { immediate: true }); // Initialize immediately
+}, { immediate: true });
 
 function desktopClass() {
   if (props.isDesktop) {
@@ -91,9 +89,7 @@ function close_setting_dialog_func() {
 }
 
 function handleDeleteChat(chatId) {
-  // Update local array for immediate visual feedback
   localChatHistoryArray.value = localChatHistoryArray.value.filter(chat => chat.id !== chatId);
-  // Emit to parent for actual state management
   emit('delete-chat-history', chatId);
 }
 
@@ -113,7 +109,7 @@ async function handleChatSelected(conversationId) {
 
     const data = await response.json();
     console.log("Conversation switched successfully:", data);
-    emit('switch-conversation', conversationId); // Emit event to parent to update main chat view
+    emit('switch-conversation', conversationId);
   } catch (error) {
     console.error("Error switching conversation:", error);
   }

@@ -2,14 +2,14 @@
 import axios from "axios";
 import khmerFlagIcon from "../assets/icon/kh_flag.svg";
 import englishFlagIcon from "../assets/icon/us_flag.svg";
-import { defineProps, defineEmits, ref, nextTick, computed, watch } from "vue"; // Import watch
-import { useRouter } from "vue-router"; // Import useRouter
+import { defineProps, defineEmits, ref, nextTick, computed } from "vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   isKhmer: Boolean,
   isGenerating: Boolean,
   chatArray: Array,
-  currentConversationId: String, // New prop
+  conversationId: String,
 });
 
 const type_english = "Bart Bong?";
@@ -17,52 +17,35 @@ const type_khmer = "បាទបង?";
 
 const text = ref("");
 const khmerResponse = ref(false)
-const conversationId = ref(props.currentConversationId); // Initialize with prop
 
-const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom", "message-sent"]);
-const router = useRouter(); // Initialize useRouter
-
-// Watch for changes in currentConversationId prop and update local conversationId ref
-watch(() => props.currentConversationId, (newVal) => {
-  conversationId.value = newVal;
-});
+const emit = defineEmits(["set-is-generating-to", "scroll-to-bottom", "message-sent", "new-message", "update:conversationId"]);
+const router = useRouter();
 
 const isSendButtonEnabled = computed(() => {
   return text.value.trim() !== "";
 });
 
 function printConversationId() {
-  console.log("Conversation ID:", conversationId.value);
+  console.log("Conversation ID:", props.conversationId);
 }
 
 function send_message(message_content) {
   if (text.value.trim() !== "") {
     emit("set-is-generating-to", true);
     console.log("isGenerating = " + props.isGenerating);
-    add_new_message("user", message_content);
+    emit("new-message", { role: "user", content: message_content });
+    text.value = "";
     fetch_api(message_content);
   }
 }
 
-function add_new_message(user_type, message_content) {
-  props.chatArray.push({ role: user_type, content: message_content });
-  if (user_type.toLowerCase() == "user") {
-    text.value = "";
-  }
-  nextTick(() => {
-    const textarea = document.querySelector(".chat_text_editor");
-    textarea.focus();
-  });
-  emit("scroll-to-bottom");
-}
-
 async function fetch_api(message_content) {
   try {
-    const authToken = localStorage.getItem("session_token"); // Get auth token from local storage
+    const authToken = localStorage.getItem("session_token");
     const preferLang = khmerResponse.value ? "kh" : "en";
 
     const requestBody = {
-      conversationId: conversationId.value, // Use the conversationId ref
+      conversationId: props.conversationId,
       chatStructure: {
         content: message_content,
         metaContent: message_content,
@@ -83,16 +66,15 @@ async function fetch_api(message_content) {
     if (response.data && response.data.status === "fail" && response.data.message === "unauthorized") {
       localStorage.clear();
       console.log("Unauthorized: Local storage cleared.");
-      router.push('/login'); // Navigate to login page
+      router.push('/login');
       return; 
     }
 
     if (response.data && response.data.chatStructure) {
-      // Update conversationId if present in the response
       if (response.data.conversationId) {
-        conversationId.value = response.data.conversationId;
+        emit("update:conversationId", response.data.conversationId);
       }
-      add_new_message(response.data.chatStructure.role, response.data.chatStructure.content);
+      emit("new-message", { role: response.data.chatStructure.role, content: response.data.chatStructure.content });
       emit('message-sent');
     } else {
       console.error("Invalid response format:", response.data);
@@ -100,6 +82,14 @@ async function fetch_api(message_content) {
   } catch (error) {
     console.error("Error fetching data:", error);
     emit("set-is-generating-to", false);
+  } finally {
+    nextTick(() => {
+      const textarea = document.querySelector(".chat_text_editor");
+      if (textarea) {
+        textarea.focus();
+      }
+    });
+    emit("scroll-to-bottom");
   }
 }
 
