@@ -10,10 +10,10 @@ const props = defineProps({
   isGenerating: Boolean,
   isSignedIn: Boolean,
   chatArray: Array,
-  currentConversationId: String, // New prop
+  conversationId: String,
 });
 
-const emit = defineEmits(["toggle-expand", "set-is-generating-to", "showProfileDialog", "message-sent"]);
+const emit = defineEmits(["toggle-expand", "set-is-generating-to", "showProfileDialog", "message-sent", "new-message", "update:conversationId"]);
 
 const chatListScrollView = ref(null);
 
@@ -40,6 +40,15 @@ function presentLoginScreen() {
 
 function handleMessageSent() {
   emit('message-sent');
+}
+
+function handleNewMessage(message) {
+  emit("new-message", message);
+  scrollToBottom();
+}
+
+function updateConversationId(id) {
+  emit("update:conversationId", id);
 }
 </script>
 
@@ -85,9 +94,9 @@ function handleMessageSent() {
       </div>
 
       <ChatInputBar :isKhmer="isKhmer" :isGenerating="isGenerating" :chatArray="chatArray"
-        :currentConversationId="currentConversationId" @set-is-generating-to="
+        :conversationId="conversationId" @set-is-generating-to="
         (isActive) => emit('set-is-generating-to', isActive)
-      " @scroll-to-bottom="scrollToBottom" @message-sent="handleMessageSent" />
+      " @scroll-to-bottom="scrollToBottom" @message-sent="handleMessageSent" @new-message="handleNewMessage" @update:conversationId="updateConversationId" />
     </div>
 
     <div class="mini_friendly_reminder no_break_line">

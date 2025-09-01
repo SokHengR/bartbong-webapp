@@ -1,29 +1,27 @@
 <script setup>
-import { ref, onMounted, watchEffect } from "vue";
+import { ref, onMounted } from "vue";
 import ChatView from "../components/ChatView.vue";
 import SideBar from "../components/SideBar.vue";
 import { useRouter } from "vue-router";
-// import ReviewDialog from "./pop_up_dialog/DevelopmentDialog.vue";
 import ProfileDialog from "./pop_up_dialog/ProfileDialog.vue";
 import DevelopmentDialog from "./pop_up_dialog/DevelopmentDialog.vue";
 import FeedbackDialog from "./pop_up_dialog/FeedbackDialog.vue";
 import ConfirmAlertDialog from "./pop_up_dialog/ConfirmAlertDialog.vue";
 import LoadingIndicator from "./pop_up_dialog/LoadingIndicator.vue";
 
-const router = useRouter();
+const conversationId = ref("");
 
 const isExpand = ref(false);
 const isKhmer = ref(true);
 const chatArray = ref([]);
-const ChatHistoryArray = ref([]); // Added ChatHistoryArray
+const ChatHistoryArray = ref([]);
 const isGenerating = ref(true);
 const isSignedIn = ref(false);
 const acceptDevelopmentWarning = ref(false);
 const showProfileDialog = ref(false);
 const showFeedbackDialog = ref(false);
 const showConfirmAlertDialog = ref(false)
-const showLoadingIndicator = ref(false); // New reactive variable for loading indicator
-const currentConversationId = ref(""); // New reactive variable for current conversation ID
+const showLoadingIndicator = ref(false);
 
 const title_confirmDialog = ref("")
 const message_confirmDialog = ref("")
@@ -42,7 +40,7 @@ onMounted(() => {
   if (alreadySignedIn !== null) {
     isSignedIn.value = alreadySignedIn === "true";
   }
-  fetchChatHistory(); // Initialize ChatHistoryArray on mount
+  fetchChatHistory();
 });
 
 function toggleExpand() {
@@ -66,7 +64,7 @@ async function fetchChatHistory() {
 
     if (response.ok) {
       const data = await response.json();
-      ChatHistoryArray.value = data; // Replace with new response
+      ChatHistoryArray.value = data;
       console.log("Chat history fetched successfully:", ChatHistoryArray.value);
     } else {
       console.error("Failed to fetch chat history on the server.");
@@ -76,7 +74,7 @@ async function fetchChatHistory() {
   }
 }
 
-async function deleteChatHistory(conversationId) {
+async function deleteChatHistory(conversation_id) {
   const sessionToken = localStorage.getItem("session_token");
   if (!sessionToken) {
     console.error("Session token not found. Unable to delete chat history.");
@@ -84,7 +82,7 @@ async function deleteChatHistory(conversationId) {
   }
 
   try {
-    const response = await fetch(`https://server.bartbong.com/api/chat/chat_list?conversation_id=${conversationId}&token=${sessionToken}`, {
+    const response = await fetch(`https://server.bartbong.com/api/chat/chat_list?conversation_id=${conversation_id}&token=${sessionToken}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -92,15 +90,14 @@ async function deleteChatHistory(conversationId) {
     });
 
     if (response.ok) {
-      console.log(`Chat history with ID ${conversationId} deleted successfully.`);
-      ChatHistoryArray.value = ChatHistoryArray.value.filter(chat => chat.id !== conversationId);
-      // Clear current conversation if the deleted one was active
-      if (currentConversationId.value === conversationId) {
-        currentConversationId.value = null;
+      console.log(`Chat history with ID ${conversation_id} deleted successfully.`);
+      ChatHistoryArray.value = ChatHistoryArray.value.filter(chat => chat.id !== conversation_id);
+      if (conversation_id === conversationId.value) {
+        conversationId.value = "";
         chatArray.value = [];
       }
     } else {
-      console.error(`Failed to delete chat history with ID ${conversationId} on the server.`);
+      console.error(`Failed to delete chat history with ID ${conversation_id} on the server.`);
     };
   } catch (error) {
     console.error("Error deleting chat history:", error);
@@ -109,11 +106,11 @@ async function deleteChatHistory(conversationId) {
 
 async function clearAllChat() {
   console.log("Clean Chat");
-  showLoadingIndicator.value = true; // Show loading indicator
+  showLoadingIndicator.value = true;
   const sessionToken = localStorage.getItem("session_token");
   if (!sessionToken) {
     console.error("Session token not found. Unable to clear chat.");
-    showLoadingIndicator.value = false; // Dismiss loading indicator on error
+    showLoadingIndicator.value = false;
     return;
   }
 
@@ -128,20 +125,19 @@ async function clearAllChat() {
     if (response.ok) {
       console.log("All chat history cleared successfully on the server.");
       chatArray.value = [];
-      currentConversationId.value = null; // Clear current conversation ID
-      fetchChatHistory(); // Refresh ChatHistoryArray after clearing
+      conversationId.value = "";
+      fetchChatHistory();
     } else {
       console.error("Failed to clear chat history on the server.");
-      // Optionally, handle error response from the server
     }
   } catch (error) {
     console.error("Error clearing chat history:", error);
   } finally {
-    showLoadingIndicator.value = false; // Dismiss loading indicator regardless of success or failure
+    showLoadingIndicator.value = false;
   }
 }
 
-async function handleSwitchConversation(conversationId) {
+async function handleSwitchConversation(conversation_id) {
   showLoadingIndicator.value = true;
   try {
     const sessionToken = localStorage.getItem("session_token");
@@ -149,7 +145,7 @@ async function handleSwitchConversation(conversationId) {
       console.error("Session token not found.");
       return;
     }
-    const apiUrl = `https://server.bartbong.com/api/chat/conversations?token=${sessionToken}&conversation_id=${conversationId}`;
+    const apiUrl = `https://server.bartbong.com/api/chat/conversations?token=${sessionToken}&conversation_id=${conversation_id}`;
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
@@ -157,10 +153,11 @@ async function handleSwitchConversation(conversationId) {
     }
 
     const data = await response.json();
-    chatArray.value = []; // Clear current chat array
-    chatArray.value = data; // Populate with new conversation data
-    currentConversationId.value = conversationId; // Update currentConversationId
-    isGenerating.value = false; // Set isGenerating to false when switching conversations
+    chatArray.value = [];
+    chatArray.value = data;
+    chatArray.value.reverse();
+    conversationId.value = conversation_id;
+    isGenerating.value = false;
     console.log("Conversation switched successfully:", data);
   } catch (error) {
     console.error("Error switching conversation:", error);
@@ -212,9 +209,17 @@ function openConfirmDialog() {
 
 function createNewChat() {
   chatArray.value = [];
-  currentConversationId.value = "";
-  // The ChatInputBar will reset its internal conversationId when it receives an empty currentConversationId
+  conversationId.value = "";
 }
+
+function handleNewMessage(message) {
+  chatArray.value.push(message);
+}
+
+function updateConversationId(id) {
+  conversationId.value = id;
+}
+
 </script>
 
 <template>
@@ -226,8 +231,8 @@ function createNewChat() {
   <LoadingIndicator v-if="showLoadingIndicator" /> <!-- Loading Indicator component -->
   <div class="split_view_container">
     <ChatView :isExpand="isExpand" :isKhmer="isKhmer" :isGenerating="isGenerating" :isSignedIn="isSignedIn"
-      :chatArray="chatArray" :currentConversationId="currentConversationId" @toggle-expand="toggleExpand" @set-is-generating-to="setIsGeneratingTo"
-      @showProfileDialog="setProfileDialog" @message-sent="fetchChatHistory" />
+      :chatArray="chatArray" :conversationId="conversationId" @toggle-expand="toggleExpand" @set-is-generating-to="setIsGeneratingTo"
+      @showProfileDialog="setProfileDialog" @message-sent="fetchChatHistory" @new-message="handleNewMessage" @update:conversationId="updateConversationId" />
     <SideBar :isExpand="isExpand" :isKhmer="isKhmer" :isDesktop="true" :showFeedback="showFeedbackDialog"
       :chatList="chatArray" :chatHistoryArray="ChatHistoryArray" @toggle-expand="toggleExpand" @clear-all-chat="openConfirmDialog"
       @toggle-language="toggleLanguage" @show-feedback-dialog="showFeedbackDialogAlert" @delete-chat-history="deleteChatHistory"
