@@ -75,6 +75,8 @@ export default {
 
 .chat_info {
   flex-grow: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .chat_title {
